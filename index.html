@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucila Vallina | Data & Creative Strategy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FCF9F2; --text-dark: #1A1A1A; --text-light: #5A5A5A;
+            --pink: #F7C8D0; --blue: #B3D4E6; --yellow: #FCE18B; 
+            --card-bg: #FFFFFF; --green: #C8E6C9;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: var(--bg); color: var(--text-dark); line-height: 1.6; font-weight: 400; -webkit-user-select: none; user-select: none; scroll-behavior: smooth; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 500; color: var(--text-dark); }
+        img, .card-img { pointer-events: none; -webkit-user-drag: none; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; position: fixed; width: 100%; top: 0; z-index: 100; background: rgba(252, 249, 242, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; color: var(--text-dark); }
+        .nav-links a { color: var(--text-dark); text-decoration: none; margin-left: 2rem; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--pink); }
+        header { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 120px 5% 60px; position: relative; overflow: hidden; text-align: center; }
+        .hero-tag { color: var(--text-dark); background: var(--yellow); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: 1px; text-transform: uppercase; font-size: 0.75rem; display: inline-block; align-self: center; }
+        header h1 { font-size: clamp(2rem, 5vw, 3.8rem); line-height: 1.1; margin-bottom: 1.5rem; max-width: 900px; margin-inline: auto; font-weight: 400; }
+        header h1 i { font-style: italic; color: var(--text-dark); position: relative; z-index: 1; font-weight: 400; }
+        header h1 i::after { content: ''; position: absolute; left: 0; bottom: 5px; width: 100%; height: 15px; background: var(--pink); z-index: -1; opacity: 0.7; }
+        header p { font-size: 1.1rem; color: var(--text-light); max-width: 620px; margin-inline: auto; margin-bottom: 1rem; }
+        header p strong { color: var(--text-dark); font-weight: 600; }
+        .btn { display: inline-block; background: var(--text-dark); color: #fff; padding: 1rem 2.5rem; text-decoration: none; font-weight: 600; font-size: 0.9rem; border-radius: 30px; transition: transform 0.3s, box-shadow 0.3s; border: none; cursor: pointer; }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .blob-1, .blob-2 { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.6; }
+        .blob-1 { width: 400px; height: 400px; background: var(--yellow); top: -100px; right: -100px; }
+        .blob-2 { width: 300px; height: 300px; background: var(--blue); bottom: 10%; left: -50px; }
+        .about { background: #fff; padding: 6rem 5%; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .about-content { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 4rem; }
+        .about-text { flex: 1; text-align: left; }
+        .about-text h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .about-text p { font-size: 1.1rem; color: var(--text-light); margin-bottom: 1.5rem; }
+        .about-text p strong { color: var(--text-dark); font-weight: 600; }
+        .about-photo { flex-shrink: 0; width: 380px; height: 490px; border-radius: 20px; background-color: var(--pink); background-image: url('assets/mi-foto.jpg'); background-size: cover; background-position: center; box-shadow: 15px 15px 0px var(--blue); border: 4px solid #fff; }
+        @media (max-width: 850px) { .about-content { flex-direction: column; text-align: center; gap: 2.5rem; } .about-text { text-align: center; } .about-photo { width: 100%; max-width: 340px; height: 440px; box-shadow: 8px 8px 0px var(--blue); } }
+        section { padding: 6rem 5%; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .section-header p { color: var(--text-light); font-size: 1rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; max-width: 1240px; margin: 0 auto; }
+        @media (max-width: 380px) { .grid { grid-template-columns: 1fr; } }
+        .data-panel { background: var(--blue); border-radius: 16px; padding: 2.2rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1.6rem; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.03); }
+        .data-panel h3 { font-size: 1.7rem; line-height: 1.25; margin: 0.9rem 0 0.7rem; }
+        .data-panel p { color: #3b4b52; font-size: 0.95rem; }
+        .data-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; }
+        .data-stat { background: rgba(255,255,255,0.78); border-radius: 12px; padding: 1.1rem 1.2rem; }
+        .data-stat strong { display: block; font-family: 'Playfair Display', serif; font-weight: 500; font-size: 2.4rem; line-height: 1; color: var(--text-dark); }
+        .data-stat span { display: block; font-size: 0.78rem; color: var(--text-light); margin-top: 0.5rem; line-height: 1.4; }
+        .data-panel .tools { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .data-panel .tool-badge { padding: 0.45rem 0.95rem; font-size: 0.8rem; box-shadow: none; }
+        @media (min-width: 1170px) { .data-panel { grid-column: span 2; } }
+        .card { background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; border: 1px solid rgba(0,0,0,0.03); }
+        .card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .card-img { width: 100%; aspect-ratio: 16 / 9; height: auto; background-color: #f0f0f0; background-size: cover; background-position: center; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-content { padding: 2rem; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-tags { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .tag { background: #F0F0F0; color: var(--text-dark); font-size: 0.7rem; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .tag.impact { background: var(--blue); color: var(--text-dark); }
+        .tag.result { background: var(--yellow); color: var(--text-dark); }
+        .card h3 { font-size: 1.4rem; margin-bottom: 0.8rem; font-weight: 500; }
+        .card p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.5rem; flex-grow: 1; }
+        .card-link { color: var(--text-dark); text-decoration: none; font-weight: 700; font-size: 0.85rem; display: inline-block; border-bottom: 2px solid var(--pink); padding-bottom: 2px; align-self: flex-start; transition: color 0.3s; cursor: pointer; }
+        .card-link:hover { color: var(--pink); }
+        .tools-section { background: var(--pink); padding: 4rem 5%; text-align: center; }
+        .tools-section h3 { font-size: 1.5rem; margin-bottom: 2rem; }
+        .tools-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; max-width: 800px; margin: 0 auto; }
+        .tool-badge { background: #fff; padding: 0.8rem 1.5rem; border-radius: 30px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        footer { padding: 4rem 5%; text-align: center; background: var(--text-dark); color: #fff; }
+        footer h2 { color: #fff; font-size: 2rem; margin-bottom: 1rem; }
+        .socials a { color: #fff; text-decoration: none; margin: 0 1rem; font-weight: 600; border-bottom: 1px solid transparent; transition: border 0.3s; }
+        .socials a:hover { border-bottom: 1px solid var(--pink); }
+        .watermark { font-size: 0.75rem; color: #888; padding: 2rem 0; letter-spacing: 1px; }
+        @media (max-width: 768px) { .nav-links { display: none; } }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(26, 26, 26, 0.95); backdrop-filter: blur(5px); justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s; }
+        .modal.active { display: flex; opacity: 1; }
+        .modal-content { width: 90%; max-width: 1000px; height: 90%; background: #fff; border-radius: 12px; position: relative; overflow-y: auto; padding: 3rem; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--text-dark); font-size: 2.5rem; cursor: pointer; z-index: 10; line-height: 1; }
+        .close-modal:hover { color: var(--pink); }
+        .case-title { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        .case-subtitle { color: var(--text-light); font-size: 1.1rem; margin-bottom: 2rem; font-style: italic; }
+        .case-meta { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .case-description { font-size: 1rem; color: var(--text-dark); margin-bottom: 2rem; line-height: 1.8; }
+        .case-file-viewer { width: 100%; height: auto; min-height: 400px; background: #f4f4f4; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; border: 1px solid rgba(0,0,0,0.1); position: relative; padding: 20px; gap: 20px; }
+        .case-file-viewer iframe { width: 100%; height: 600px; border: none; border-radius: 8px; }
+        .case-file-viewer img { max-width: 100%; height: auto; display: block; pointer-events: auto; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .case-video-row { display: flex; justify-content: center; align-items: flex-start; gap: 1rem; flex-wrap: wrap; width: 100%; margin-top: 1rem; }
+        .case-video { flex: 0 1 180px; max-width: 180px; width: 23%; margin: 0; display: block; }
+        .case-video video { width: 100%; height: auto; display: block; border-radius: 10px; background: #1A1A1A; box-shadow: 0 4px 14px rgba(0,0,0,0.08); }
+        .video-caption { margin: 0; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; color: var(--text-light); }
+        .pdf-actions { text-align: center; margin: 0 0 15px; }
+        .pdf-actions a { color: var(--text-dark); font-weight: 600; font-size: 0.85rem; border-bottom: 2px solid var(--pink); text-decoration: none; }
+        .btn-entrega { padding: 10px 15px; margin: 0 10px 10px 0; background: #fff; color: var(--text-dark); border: 2px solid var(--text-dark); border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600; }
+        .btn-entrega.activo { background: var(--text-dark); color: #fff; }
+        .video-box { max-width: 560px; margin: 0 auto; }
+        .video-wrap { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #1A1A1A; border-radius: 12px; overflow: hidden; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+        .video-wrap img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; }
+        .video-wrap iframe, .video-wrap video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; object-fit: contain; background: #1A1A1A; }
+        .video-wrap.is-local { cursor: default; }
+        .play-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; background: rgba(26,26,26,0.85); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; padding-left: 4px; transition: transform 0.2s, background 0.2s; }
+        .video-wrap:hover .play-btn { transform: translate(-50%, -50%) scale(1.1); background: #1A1A1A; }
+        .video-fallback { text-align: center; margin-top: 12px; font-size: 0.85rem; }
+        .video-fallback a { color: var(--text-dark); font-weight: 600; border-bottom: 2px solid var(--pink); text-decoration: none; }
+        @media (max-width: 600px) { .modal-content { padding: 3rem 1rem 1rem; width: 96%; height: 94%; } .case-file-viewer { padding: 10px; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">LV.</div>
+        <div class="nav-links">
+            <a href="#sobre-mi">Sobre Mí</a>
+            <a href="#visual">Marketing Visual</a>
+            <a href="#data">Data Analytics</a>
+            <a href="#web">Web & UX</a>
+            <a href="#contacto" class="btn" style="padding: 0.6rem 1.2rem; color: #fff;">Contacto</a>
+        </div>
+    </nav>
+    <header>
+        <div class="blob-1"></div>
+        <div class="blob-2"></div>
+        <div class="hero-tag">Data Analyst & AI Creative</div>
+        <h1>Transformo datos complejos en <i>estrategias creativas</i> que generan impacto.</h1>
+        <p>¡Hola! Soy Lucila.</p>
+        <p>Mi lado curioso me lleva a cruzar mis gustos por el análisis de datos, el marketing y herramientas No-Code/IA para crear piezas visuales y proyectos funcionales.</p>
+        <p><strong>¡Echale un vistazo a mi portfolio!</strong></p>
+        <a href="#visual" class="btn">Explorar proyectos</a>
+    </header>
+    <section id="sobre-mi" class="about">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>El puente entre los números y las ideas.</h2>
+                <p>Soy <strong>futura Licenciada en Administración</strong> y me entusiasma meterme en cada proyecto con capacidad analítica e impronta innovadora para simplificar procesos y crear piezas visuales claras.</p>
+                <p>Además, acá vas a encontrar trabajos atravesados por mis propios intereses, como proyectos editoriales (<strong>¡soy una gran lectora!</strong>), recomendaciones de series y piezas gráficas, que llevo a cabo explorando herramientas nuevas para darle forma a todo aquello que me <strong>mueve</strong>, y me <strong>apasiona</strong> transformar lo que disfruto en ideas reales.</p>
+                <p><strong>¡Ojalá te guste!</strong></p>
+            </div>
+            <div class="about-photo"></div>
+        </div>
+    </section>
+    <section id="visual">
+        <div class="section-header"><h2>Marketing & Dirección de Arte</h2><p>Identidades, comunidades y editorial. Del concepto a la pieza.</p></div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-branding.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">Branding</span><span class="tag impact">Social Media</span></div>
+                    <h3>Identidades de Marca Ficticias</h3>
+                    <p>Conceptos visuales para marcas ficticias de distintos rubros: identidad, tono y piezas para redes.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('branding')">Ver caso de estudio →</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-fandoms.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">Dirección de Arte</span><span class="tag impact">Comunidades</span></div>
+                    <h3>Narrativas para Fandoms</h3>
+                    <p>Piezas visuales y tipográficas para comunidades de música y lectura, seguidas de una serie editorial en video.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('fandoms')">Ver caso de estudio →</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-ceramica.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">Editorial</span><span class="tag impact">Fotografía</span></div>
+                    <h3>Oh My Lor: Portfolio de Cerámica</h3>
+                    <p>Dirección de arte, fotografía y diseño editorial para el catálogo de esculturas de Oh My Lor.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('ceramica')">Ver caso de estudio →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section id="data" style="background: #fff;">
+        <div class="section-header"><h2>Data Analytics & Insights</h2><p>Del modelo relacional al tablero que se puede recorrer.</p></div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-modelo-relacional.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">Power BI</span><span class="tag">Data Modeling</span></div>
+                    <h3>Arquitectura de Datos Editorial</h3>
+                    <p>Proyecto integrador de Coderhouse: del modelo relacional al tablero interactivo en Power BI.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('modelo')">Ver caso de estudio →</span>
+                </div>
+            </div>
+            <aside class="data-panel">
+                <div>
+                    <span class="tag result">Hallazgo principal</span>
+                    <h3>Conviven dos tipos de lector: el inmersivo y el ágil.</h3>
+                    <p>Con datos de Goodreads analicé cómo la extensión de un libro y su pertenencia a una serie influyen en la cantidad de reseñas, y construí un tablero interactivo para explorarlo.</p>
+                </div>
+                <div class="data-stats">
+                    <div class="data-stat"><strong>29%</strong><span>más reseñas en lectores inmersivos que en ágiles</span></div>
+                    <div class="data-stat"><strong>3</strong><span>perfiles de lector: Ágil, Inmersivo y Mixto</span></div>
+                    <div class="data-stat"><strong>6</strong><span>solapas interactivas en el tablero de Power BI</span></div>
+                </div>
+                <div class="tools">
+                    <span class="tool-badge">Power BI</span><span class="tool-badge">DAX</span><span class="tool-badge">Power Query</span><span class="tool-badge">Excel</span>
+                </div>
+            </aside>
+        </div>
+    </section>
+    <section id="web">
+        <div class="section-header"><h2>Prototipado Web & UX/UI</h2><p>Interfaces pensadas para quien las va a usar.</p></div>
+        <div class="grid">
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-aula-amiga.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">EdTech</span><span class="tag">UX/UI</span></div>
+                    <h3>Aula Amiga</h3>
+                    <p>Plataforma para hablar de bullying en escuelas de CABA y GBA, con un juego y un panel para directivos.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('aulaamiga')">Ver caso de estudio →</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-bbva.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">No-Code</span><span class="tag">Accesibilidad</span></div>
+                    <h3>BBVA · Modo Accesible</h3>
+                    <p>Prototipo de home banking para adultos mayores: alto contraste, tipografía clara y lector de pantalla.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('bbva')">Ver caso de estudio →</span>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('assets/marca-minerva.jpg');"></div>
+                <div class="card-content">
+                    <div class="card-tags"><span class="tag">Web Design</span><span class="tag">Gaming</span></div>
+                    <h3>Minerva Studios</h3>
+                    <p>Landing para una consultora ficticia de diseño de videojuegos, con un editor de contenido en vivo.</p>
+                    <span class="card-link" onclick="abrirCasoEstudio('minerva')">Ver caso de estudio →</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="tools-section">
+        <h3>Mi Caja de Herramientas (Tech & Creative)</h3>
+        <div class="tools-grid">
+            <span class="tool-badge">Power BI</span>
+            <span class="tool-badge">SQL (Básico)</span>
+            <span class="tool-badge">Excel Avanzado</span>
+            <span class="tool-badge">Canva Pro</span>
+            <span class="tool-badge">ChatGPT & IA</span>
+            <span class="tool-badge">Prototipado No-Code</span>
+        </div>
+    </section>
+    <footer id="contacto">
+        <h2>¿Creamos algo juntos?</h2>
+        <div class="socials">
+            <a href="mailto:lucilavallina@hotmail.com">Email</a>
+            <a href="https://www.linkedin.com/in/lucilajazminvallina" target="_blank">LinkedIn</a>
+            <a href="https://github.com/LucilaJV" target="_blank">GitHub</a>
+        </div>
+        <div class="watermark">© 2026 Lucila Vallina. Todos los derechos reservados.</div>
+    </footer>
+    <div class="modal" id="miModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="cerrarModal()">×</span>
+            <div id="contenidoCaso"></div>
+        </div>
+    </div>
+    <script>
+        const proyectos = {
+            branding: {
+                titulo: "Identidades de Marca Ficticias", subtitulo: "Exploración de branding y social media.", tags: ["Branding", "Canva Pro", "IA Generativa"], descripcion: "Una serie de identidades visuales para marcas ficticias de distintos rubros. Cada una tiene su concepto, su paleta y sus piezas de redes.", tipo: "galeria",
+                archivo: [
+                    "assets/marcas-1.jpg", 
+                    "assets/marcas-2.jpg"
+                ]
+            },
+            fandoms: {
+                titulo: "Narrativas para Fandoms", subtitulo: "Posteos y video editorial para comunidades de nicho.", tags: ["Dirección de Arte", "Copywriting"], descripcion: "Posteos para comunidades de nicho, entre BTS y Bookstagram. Debajo de las piezas estáticas, dos videos editoriales siguen la misma dirección de arte.", tipo: "galeria",
+                archivo: [
+                    "assets/fandom-1.jpg", 
+                    "assets/fandom-2.jpg", 
+                    "assets/fandom-3.jpg",
+                    "assets/fandom-4.jpg",
+                    "assets/fandom-5.jpg"
+                ],
+                videos: [
+                    { src: "assets/editorial-idl.mp4", label: "Editorial IDL" },
+                    { src: "assets/editorial-idl-2.mp4", label: "Editorial IDL II" },
+                    { src: "assets/editorial-idl-3.mp4", label: "Editorial IDL III" },
+                    { src: "assets/editorial-idl-4.mp4", label: "Editorial IDL IV" }
+                ]
+            },
+            ceramica: {
+                titulo: "Oh My Lor: Portfolio de Cerámica", subtitulo: "Diseño editorial para el emprendimiento de mi hermana.", tags: ["Editorial", "Fotografía"], descripcion: "Portfolio editorial para Oh My Lor, el emprendimiento de cerámica de mi hermana. Reúne dirección de arte, fotografía y el catálogo de esculturas.", tipo: "pdf",
+                archivo: "documentos/oh-my-lor.pdf"
+            },
+            modelo: {
+                titulo: "Arquitectura de Datos Editorial", subtitulo: "Proyecto integrador: modelo relacional y Power BI.", tags: ["Power BI", "Data Modeling", "SQL"], descripcion: "Proyecto final de Coderhouse. Partí de datos de Goodreads, limpié la base, armé el modelo relacional y lo llevé a un tablero en Power BI. Abajo están las tres entregas, la presentación final y el video donde recorro el trabajo.", tipo: "proyecto-completo",
+                archivo: { 
+                    pdfs: [
+                        { label: "Entrega 1", url: "documentos/entrega-n1.pdf" },
+                        { label: "Entrega 2", url: "documentos/entrega-n2.pdf" },
+                        { label: "Entrega 3", url: "documentos/entrega-n3.pdf" },
+                        { label: "Presentación final", url: "documentos/presentacion-final.pdf" }
+                    ], 
+                    video: "assets/powerbi-video.mp4",
+                    youtube: "w3Xameel0fM" 
+                }
+            },
+            aulaamiga: {
+                titulo: "Aula Amiga · EdTech", subtitulo: "Plataforma web de convivencia escolar.", tags: ["UX/UI", "EdTech", "No-Code"], descripcion: "Una plataforma para escuelas de CABA y GBA que invita a hablar de convivencia y bullying. Incluye un juego interactivo y un panel para directivos.", tipo: "html",
+                archivo: "documentos/aula-amiga.html"
+            },
+            bbva: {
+                titulo: "BBVA · Modo Accesible", subtitulo: "Home Banking para adultos mayores.", tags: ["No-Code", "Accesibilidad"], descripcion: "Mockup de home banking pensado para adultos mayores: lector de pantalla, alto contraste y una tipografía que se puede agrandar.", tipo: "html",
+                archivo: "documentos/mockup-bbva.html"
+            },
+            minerva: {
+                titulo: "Minerva Studios", subtitulo: "Consultora de diseño de videojuegos.", tags: ["Web Design", "No-Code"], descripcion: "Landing de Minerva Studios, una consultora ficticia de diseño de videojuegos. La página incluye un editor para cambiar el contenido en vivo.", tipo: "html",
+                archivo: "documentos/minerva-studios.html"
+            }
+        };
+
+        function abrirCasoEstudio(idProyecto) {
+            const modal = document.getElementById('miModal');
+            const contenedor = document.getElementById('contenidoCaso');
+            const proyecto = proyectos[idProyecto];
+            if(!proyecto) return;
+            let tagsHTML = '';
+            proyecto.tags.forEach(tag => { tagsHTML += `<span class="tag">${tag}</span>`; });
+            let visorHTML = '';
+            
+            if(proyecto.tipo === 'galeria') {
+                proyecto.archivo.forEach(img => { visorHTML += `<img src="${img}" alt="${proyecto.titulo}">`; });
+                if (proyecto.videos) {
+                    let videosHTML = '';
+                    proyecto.videos.forEach(video => {
+                        videosHTML += `<figure class="case-video"><video autoplay muted loop playsinline preload="metadata" src="${video.src}" title="${video.label}"></video></figure>`;
+                    });
+                    visorHTML += `<div class="case-video-row">${videosHTML}</div>`;
+                }
+            } else if (proyecto.tipo === 'pdf') {
+                visorHTML = `
+                    <div style="width:100%;">
+                        <div class="pdf-actions"><a href="${proyecto.archivo}" target="_blank" rel="noopener">Abrir PDF en una pestaña nueva ↗</a></div>
+                        <iframe src="${proyecto.archivo}" title="${proyecto.titulo}" width="100%" height="600px" style="border:none; border-radius:8px; background:#fff;"></iframe>
+                    </div>`;
+            } else if (proyecto.tipo === 'proyecto-completo') {
+                let botonesHTML = '';
+                proyecto.archivo.pdfs.forEach((pdf, index) => {
+                    botonesHTML += `<button class="btn-entrega ${index === 0 ? 'activo' : ''}" onclick="cambiarPDF('${pdf.url}', this)">${pdf.label}</button>`;
+                });
+                const primero = proyecto.archivo.pdfs[0].url;
+                visorHTML = `
+                    <div style="width:100%;">
+                        <h3 style="margin-bottom:15px; text-align:center;">Documentación del Proyecto</h3>
+                        <div style="margin-bottom:15px; text-align:center;">${botonesHTML}</div>
+                        <div class="pdf-actions"><a id="pdf-link-externo" href="${primero}" target="_blank" rel="noopener">Abrir PDF en una pestaña nueva ↗</a></div>
+                        <iframe id="pdf-viewer-dinamico" src="${primero}" title="Entrega" width="100%" height="600px" style="border:none; border-radius:8px; margin-bottom:30px; background:#fff;"></iframe>
+                        <h3 style="margin-bottom:15px; text-align:center; border-top:1px solid #ddd; padding-top:20px;">Video Explicativo</h3>
+                        <div class="video-box">
+                            <div class="video-wrap is-local">
+                                <video autoplay muted loop playsinline preload="metadata" src="${proyecto.archivo.video}" title="Video explicativo"></video>
+                            </div>
+                            <p class="video-fallback"><a href="https://youtu.be/${proyecto.archivo.youtube}" target="_blank" rel="noopener">Verlo también en YouTube ↗</a></p>
+                        </div>
+                    </div>`;
+            } else if (proyecto.tipo === 'html') {
+                visorHTML = `
+                    <div style="width:100%;">
+                        <div class="pdf-actions"><a href="${proyecto.archivo}" target="_blank" rel="noopener">Abrir proyecto en una pestaña nueva ↗</a></div>
+                        <iframe src="${proyecto.archivo}" title="${proyecto.titulo}" width="100%" height="650px" style="border:none; border-radius:8px; background:#fff;"></iframe>
+                    </div>`;
+            }
+            contenedor.innerHTML = `
+                <h2 class="case-title">${proyecto.titulo}</h2>
+                <p class="case-subtitle">${proyecto.subtitulo}</p>
+                <div class="case-meta">${tagsHTML}</div>
+                <p class="case-description">${proyecto.descripcion}</p>
+                <div class="case-file-viewer" style="min-height: auto;">${visorHTML}</div>
+            `;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function cambiarPDF(ruta, boton) {
+            document.getElementById('pdf-viewer-dinamico').src = ruta;
+            document.getElementById('pdf-link-externo').href = ruta;
+            document.querySelectorAll('.btn-entrega').forEach(b => b.classList.remove('activo'));
+            if (boton) boton.classList.add('activo');
+        }
+
+        function cerrarModal() {
+            const modal = document.getElementById('miModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(() => { document.getElementById('contenidoCaso').innerHTML = ''; }, 300);
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(); });
+        document.getElementById('miModal').addEventListener('click', function(e) { if(e.target === this) cerrarModal(); });
+    </script>
+</body>
+</html>

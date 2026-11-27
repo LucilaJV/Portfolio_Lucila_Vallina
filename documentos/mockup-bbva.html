@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="es-ES">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BBVA · Modo Accesible</title>
+<style>
+:root{
+  --bbva-blue:#004481;--bbva-dark:#072146;--bbva-mid:#1973B8;
+  --bbva-light:#5BBEFF;--bbva-aqua:#2DCCCD;
+  --bg:#F4F6F8;--text:#072146;--muted:#5a6a7a;--card:#ffffff;
+  --border:#d6dee6;--success:#4CAF50;--danger:#E53935;--warning:#F5A623;
+}
+body[data-contraste="on"]{
+  --bbva-blue:#000;--bbva-dark:#000;--bbva-mid:#000;--bbva-light:#ffff00;
+  --bg:#000;--text:#fff;--card:#000;--border:#ffff00;--muted:#ffff00;
+}
+body[data-daltonismo="on"]{
+  --success:#1973B8;--danger:#E67E22;--warning:#8E44AD;
+}
+
+/* El tamaño de texto se aplica al ROOT (html) vía JS para que escalen los rem */
+html{font-size:18px;}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;
+  background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;
+}
+
+/* === CLICKABILIDAD REFORZADA ===
+   Los hijos de elementos interactivos no capturan el clic: el evento
+   siempre llega al <button>. Esto es clave para el modo Iconos. */
+.btn > *,
+.action-card > *,
+.menu-item > *,
+.finger-btn > *,
+.ctrl-btn > *,
+.btn-logout > *,
+.balance-toggle > *,
+.modal-close > *{pointer-events:none;}
+
+.top-bar{
+  background:var(--bbva-dark);color:#fff;padding:10px 16px;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2);
+}
+body[data-contraste="on"] .top-bar{background:#000;border-bottom:3px solid #ffff00;}
+.brand{display:flex;align-items:center;gap:10px;}
+.logo{background:#fff;color:var(--bbva-blue);font-weight:900;font-size:18px;
+  padding:6px 12px;border-radius:8px;letter-spacing:1px;}
+body[data-contraste="on"] .logo{background:#ffff00;color:#000;border:2px solid #fff;}
+.brand-sub{font-size:12px;font-weight:600;color:var(--bbva-light);
+  text-transform:uppercase;letter-spacing:1px;}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.ctrl-group{display:flex;gap:2px;background:rgba(255,255,255,.08);
+  border-radius:10px;padding:3px;}
+.ctrl-btn{
+  background:transparent;border:1px solid transparent;color:#fff;font-family:inherit;
+  font-weight:700;font-size:14px;padding:7px 12px;border-radius:8px;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:background .2s,border-color .2s,box-shadow .2s;
+}
+.ctrl-btn:hover{background:rgba(255,255,255,.15);}
+.ctrl-btn.active{background:#fff;color:var(--bbva-blue);
+  box-shadow:0 0 0 2px var(--bbva-light),0 0 16px rgba(91,190,255,.7);}
+body[data-contraste="on"] .ctrl-btn.active{background:#ffff00;color:#000;border-color:#fff;}
+body[data-daltonismo="on"] .ctrl-btn[data-toggle="daltonismo"]{
+  background:#E67E22;color:#fff!important;
+  box-shadow:0 0 0 3px #fff,0 0 24px rgba(230,126,34,1);
+  transform:scale(1.05);
+}
+.ctrl-label{font-size:12px;}
+@media (max-width:640px){.ctrl-label{display:none;}}
+
+.status-badge{
+  position:fixed;top:80px;right:14px;background:var(--bbva-mid);color:#fff;
+  padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:800;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:90;display:none;
+  gap:6px;align-items:center;
+}
+.status-badge.show{display:inline-flex;}
+body[data-contraste="on"] .status-badge{background:#ffff00;color:#000;border:2px solid #fff;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+.container{max-width:960px;margin:0 auto;padding:24px 16px 80px;}
+
+.welcome-hero{text-align:center;padding:60px 20px 40px;}
+.welcome-hero h1{font-size:2.2rem;color:var(--bbva-dark);margin:0 0 12px;}
+.welcome-hero p{font-size:1.15rem;color:var(--muted);max-width:560px;margin:0 auto 32px;}
+.welcome-actions{display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  padding:16px 24px;border-radius:14px;border:2px solid var(--bbva-blue);
+  background:#fff;color:var(--bbva-blue);font-family:inherit;font-size:1.05rem;
+  font-weight:700;cursor:pointer;text-align:center;min-height:60px;width:100%;
+  transition:background .2s,box-shadow .2s,border-color .2s;
+}
+.btn:hover{box-shadow:0 0 0 3px rgba(25,115,184,.25),0 0 20px rgba(91,190,255,.6);}
+.btn-primary{background:var(--bbva-blue);color:#fff;}
+.btn-primary:hover{background:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.4),0 0 22px rgba(91,190,255,.75);}
+body[data-contraste="on"] .btn{background:#000;color:#ffff00;border-color:#ffff00;}
+body[data-contraste="on"] .btn-primary{background:#ffff00;color:#000;border-color:#fff;}
+.btn .emoji{font-size:1.4rem;}
+.btn:disabled{opacity:.7;cursor:wait;}
+
+.form-card{
+  background:var(--card);border:2px solid var(--border);border-radius:20px;
+  padding:32px 24px;max-width:560px;margin:0 auto;
+  box-shadow:0 4px 20px rgba(7,33,70,.08);
+}
+.form-card h2{margin:0 0 8px;color:var(--bbva-dark);font-size:1.5rem;}
+.form-card .sub{margin:0 0 24px;color:var(--muted);}
+.form-card h3{color:var(--bbva-dark);font-size:1.1rem;margin:24px 0 6px;}
+.form-card .hint{color:var(--muted);font-size:.9rem;margin:0 0 12px;}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px;}
+.field label{font-weight:700;color:var(--bbva-dark);font-size:.95rem;}
+.field input,.field select{
+  padding:14px 16px;border:2px solid var(--border);border-radius:12px;
+  font-family:inherit;font-size:1rem;background:#fff;color:var(--text);
+}
+.field input:focus,.field select:focus{outline:none;border-color:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.2);}
+body[data-contraste="on"] .field input,
+body[data-contraste="on"] .field select{background:#000;color:#ffff00;border-color:#ffff00;}
+
+.finger-area{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  padding:24px;border:2px dashed var(--bbva-mid);border-radius:16px;
+  margin-bottom:20px;background:rgba(25,115,184,.05);
+}
+.finger-btn{
+  width:120px;height:120px;border-radius:50%;border:3px solid var(--bbva-blue);
+  background:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:64px;cursor:pointer;
+  transition:box-shadow .2s,border-color .2s,background .2s;
+}
+.finger-btn:hover{box-shadow:0 0 0 6px rgba(25,115,184,.2),0 0 30px rgba(91,190,255,.7);
+  border-color:var(--bbva-mid);}
+.finger-btn.scanning{animation:scanGlow 1.2s ease-in-out infinite;}
+.finger-btn.verified{border-color:var(--success);
+  box-shadow:0 0 0 6px rgba(76,175,80,.25),0 0 30px rgba(76,175,80,.7);
+  background:rgba(76,175,80,.1);}
+@keyframes scanGlow{
+  0%,100%{box-shadow:0 0 0 0 rgba(25,115,184,.6),0 0 20px rgba(91,190,255,.5);}
+  50%{box-shadow:0 0 0 12px rgba(25,115,184,0),0 0 40px rgba(91,190,255,.9);}
+}
+
+.home-header{
+  background:linear-gradient(135deg,var(--bbva-blue) 0%,var(--bbva-dark) 100%);
+  color:#fff;padding:28px 24px;border-radius:20px;margin-bottom:24px;
+  display:flex;flex-direction:column;gap:20px;
+}
+body[data-contraste="on"] .home-header{background:#000;border:3px solid #ffff00;}
+.home-greeting{font-size:1.5rem;font-weight:800;margin:0;}
+.home-sub{font-size:.95rem;opacity:.85;margin:4px 0 0;}
+.greeting-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.btn-logout{
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);color:#fff;
+  padding:8px 14px;border-radius:10px;font-family:inherit;font-weight:700;
+  font-size:.85rem;cursor:pointer;transition:background .2s;
+}
+.btn-logout:hover{background:rgba(255,255,255,.25);}
+.balance-box{
+  background:rgba(0,0,0,.25);padding:20px;border-radius:16px;
+  border:2px solid rgba(255,255,255,.2);display:flex;flex-direction:column;gap:6px;
+}
+.balance-label{
+  font-size:.8rem;text-transform:uppercase;letter-spacing:1px;
+  color:var(--bbva-light);font-weight:800;
+  display:flex;align-items:center;gap:8px;
+}
+.balance-label .b-emoji{font-size:1.2rem;}
+.balance-amount{font-size:2.4rem;font-weight:900;letter-spacing:-1px;}
+.balance-toggle{
+  align-self:flex-start;background:rgba(255,255,255,.15);border:0;color:#fff;
+  padding:6px 14px;border-radius:8px;cursor:pointer;font-family:inherit;
+  font-weight:600;font-size:.85rem;
+}
+.balance-toggle:hover{background:rgba(255,255,255,.25);}
+
+.section-title{
+  font-size:1.3rem;color:var(--bbva-dark);font-weight:800;margin:0 0 16px;
+  display:flex;align-items:center;gap:10px;
+}
+.actions-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:16px;margin-bottom:24px;
+}
+.action-card{
+  background:var(--card);border:2px solid var(--border);border-radius:20px;
+  padding:24px 16px;display:flex;flex-direction:column;align-items:center;
+  gap:12px;cursor:pointer;text-align:center;font-family:inherit;color:var(--text);
+  transition:box-shadow .2s,border-color .2s;
+}
+.action-card:hover{
+  border-color:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.15),0 0 24px rgba(91,190,255,.55);
+}
+.action-card:focus-visible{outline:3px solid var(--bbva-light);outline-offset:2px;}
+.action-icon{
+  font-size:3rem;line-height:1;padding:16px;border-radius:20px;
+  background:rgba(25,115,184,.12);transition:box-shadow .2s,background .2s;
+}
+.action-card:hover .action-icon{
+  box-shadow:0 0 0 4px rgba(25,115,184,.2),0 0 22px rgba(91,190,255,.75);
+  background:rgba(25,115,184,.2);
+}
+.action-title{font-size:1.15rem;font-weight:800;color:var(--bbva-dark);}
+.action-desc{font-size:.85rem;color:var(--muted);}
+
+.reminders-card{
+  background:linear-gradient(135deg,rgba(45,204,205,.1),rgba(25,115,184,.08));
+  border:2px solid var(--border);border-radius:20px;
+  padding:20px;margin-bottom:20px;
+}
+body[data-contraste="on"] .reminders-card{background:#000;border-color:#ffff00;}
+.reminder{
+  padding:14px;background:rgba(255,255,255,.85);border:2px solid var(--border);
+  border-radius:14px;display:flex;align-items:center;gap:14px;margin-bottom:10px;
+  transition:box-shadow .2s,border-color .2s;
+}
+body[data-contraste="on"] .reminder{background:#000;border-color:#ffff00;}
+.reminder:last-child{margin-bottom:0;}
+.reminder:hover{border-color:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.15),0 0 18px rgba(91,190,255,.5);}
+.reminder-icon{
+  font-size:2rem;width:56px;height:56px;display:flex;align-items:center;
+  justify-content:center;background:rgba(25,115,184,.15);border-radius:14px;
+  flex-shrink:0;
+}
+.reminder-info{flex:1;min-width:0;}
+.reminder-title{font-weight:700;color:var(--bbva-dark);font-size:1rem;}
+.reminder-meta{font-size:.8rem;color:var(--muted);}
+.reminder-when{
+  font-weight:900;font-size:.85rem;color:var(--bbva-mid);
+  padding:6px 12px;border-radius:20px;background:rgba(25,115,184,.15);
+  white-space:nowrap;
+}
+.reminder-when.soon{background:rgba(245,166,35,.2);color:var(--warning);}
+
+.movements-card{
+  background:var(--card);border:2px solid var(--border);border-radius:20px;
+  padding:20px;margin-bottom:20px;
+}
+.movement{
+  padding:14px;background:rgba(25,115,184,.05);border:2px solid var(--border);
+  border-radius:14px;display:flex;align-items:center;gap:14px;margin-bottom:10px;
+  transition:box-shadow .2s,border-color .2s;
+}
+.movement:hover{border-color:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.15),0 0 18px rgba(91,190,255,.5);}
+.movement-icon{
+  font-size:2rem;width:56px;height:56px;display:flex;align-items:center;
+  justify-content:center;background:rgba(25,115,184,.15);border-radius:14px;
+  flex-shrink:0;
+}
+.movement-info{flex:1;min-width:0;}
+.movement-title{font-weight:700;color:var(--bbva-dark);font-size:1rem;}
+.movement-meta{font-size:.8rem;color:var(--muted);}
+.movement-amount{font-weight:900;font-size:1.1rem;white-space:nowrap;}
+.movement-amount.positive{color:var(--success);}
+.movement-amount.negative{color:var(--danger);}
+
+body[data-daltonismo="on"] .movement-amount{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:12px;font-size:1.05rem;font-weight:900;
+  border:3px solid;color:#fff!important;
+}
+body[data-daltonismo="on"] .movement-amount.positive{
+  background:var(--success);border-color:#0d47a1;
+  box-shadow:0 0 0 2px rgba(25,115,184,.3),0 2px 6px rgba(0,0,0,.15);
+}
+body[data-daltonismo="on"] .movement-amount.positive::before{
+  content:"↑";font-size:1.4em;font-weight:900;line-height:1;
+}
+body[data-daltonismo="on"] .movement-amount.negative{
+  background:var(--danger);border-color:#a0410a;
+  box-shadow:0 0 0 2px rgba(230,126,34,.3),0 2px 6px rgba(0,0,0,.15);
+}
+body[data-daltonismo="on"] .movement-amount.negative::before{
+  content:"↓";font-size:1.4em;font-weight:900;line-height:1;
+}
+body[data-daltonismo="on"] .movement-amount.positive{font-size:0;}
+body[data-daltonismo="on"] .movement-amount.positive::after{
+  content:attr(data-amount);font-size:1.05rem;font-weight:900;
+}
+body[data-daltonismo="on"] .movement-positive{
+  border-left:8px solid var(--success);background:rgba(25,115,184,.08);
+}
+body[data-daltonismo="on"] .movement-negative{
+  border-left:8px solid var(--danger);background:rgba(230,126,34,.08);
+}
+body[data-daltonismo="on"] .reminder-when.soon{
+  background:#8E44AD;color:#fff;border:2px solid #fff;
+}
+body[data-daltonismo="on"] .reminder-when.soon::before{content:"⚠ ";}
+
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;
+  align-items:center;justify-content:center;padding:16px;z-index:1000;
+}
+.modal-bg.active{display:flex;}
+.modal{
+  background:var(--card);border-radius:20px;padding:28px 24px;max-width:560px;
+  width:100%;max-height:90vh;overflow-y:auto;border:2px solid var(--border);
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+.modal h3{margin:0 0 8px;font-size:1.35rem;color:var(--bbva-dark);}
+.modal .lead{margin:0 0 20px;color:var(--muted);}
+.modal-close{
+  float:right;background:transparent;border:0;font-size:1.5rem;cursor:pointer;
+  color:var(--muted);
+}
+.modal-close:hover{color:var(--danger);}
+.menu-list{display:flex;flex-direction:column;gap:12px;}
+.menu-item{
+  display:flex;align-items:center;gap:14px;padding:16px;border:2px solid var(--border);
+  border-radius:14px;background:#fff;cursor:pointer;font-family:inherit;
+  text-align:left;color:var(--text);width:100%;
+  transition:box-shadow .2s,border-color .2s;
+}
+body[data-contraste="on"] .menu-item{background:#000;color:#ffff00;border-color:#ffff00;}
+.menu-item:hover{border-color:var(--bbva-mid);
+  box-shadow:0 0 0 3px rgba(25,115,184,.15),0 0 20px rgba(91,190,255,.55);}
+.menu-emoji{font-size:2rem;flex-shrink:0;}
+.menu-info{flex:1;}
+.menu-title{font-weight:700;color:var(--bbva-dark);}
+.menu-desc{font-size:.85rem;color:var(--muted);}
+body[data-contraste="on"] .menu-title,
+body[data-contraste="on"] .menu-desc{color:#ffff00;}
+
+/* ===== MONTO TRANSFERENCIA ===== */
+.amount-input{
+  font-size:1.8rem!important;
+  text-align:center;
+  font-weight:900!important;
+  padding:22px 16px!important;
+  letter-spacing:2px;
+}
+.quick-amounts{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-bottom:18px;
+}
+.quick-amounts .btn{
+  min-height:52px;
+  font-size:1rem;
+  padding:12px 8px;
+}
+.summary-box{
+  background:rgba(25,115,184,.06);
+  border:2px solid var(--border);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:20px;
+}
+.summary-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.summary-row:last-child{border-bottom:0;}
+.summary-row .lbl{color:var(--muted);font-size:.95rem;}
+.summary-row .val{font-weight:800;color:var(--bbva-dark);}
+.summary-row .val.big{font-size:1.5rem;color:var(--bbva-blue);}
+
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--bbva-dark);color:#fff;padding:12px 20px;border-radius:12px;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);font-weight:600;z-index:2000;
+  opacity:0;pointer-events:none;transition:opacity .3s;max-width:90vw;
+  text-align:center;
+}
+.toast.show{opacity:1;}
+
+body[data-iconos="on"] .hide-in-icon-mode{display:none!important;}
+body[data-iconos="on"] .action-desc,
+body[data-iconos="on"] .movement-meta,
+body[data-iconos="on"] .home-sub,
+body[data-iconos="on"] .brand-sub,
+body[data-iconos="on"] .balance-label .b-text{display:none!important;}
+
+body[data-iconos="on"] .home-header{padding:20px 16px;gap:14px;}
+body[data-iconos="on"] .home-greeting{font-size:1.3rem;}
+body[data-iconos="on"] .balance-label .b-emoji{font-size:2.4rem;}
+body[data-iconos="on"] .balance-amount{font-size:3rem;text-align:center;}
+body[data-iconos="on"] .balance-box{align-items:center;text-align:center;}
+body[data-iconos="on"] .balance-toggle{display:none;}
+body[data-iconos="on"] .greeting-row{justify-content:center;text-align:center;}
+body[data-iconos="on"] .section-title{justify-content:center;font-size:2.4rem;}
+body[data-iconos="on"] .section-title .hide-in-icon-mode{display:none!important;}
+body[data-iconos="on"] .actions-grid{
+  grid-template-columns:repeat(2,1fr)!important;gap:20px!important;
+}
+body[data-iconos="on"] .action-card{
+  padding:36px 12px!important;min-height:200px;justify-content:center;gap:14px;
+}
+body[data-iconos="on"] .action-icon{font-size:6rem!important;padding:0!important;background:transparent!important;}
+body[data-iconos="on"] .action-title{font-size:1.15rem!important;font-weight:900;}
+
+/* Movimientos en modo iconos (se mantienen como estaban) */
+body[data-iconos="on"] .movement{
+  flex-direction:column;text-align:center;padding:20px 12px;gap:8px;
+}
+body[data-iconos="on"] .movement-icon{
+  font-size:4rem!important;width:auto!important;height:auto!important;background:transparent!important;
+}
+body[data-iconos="on"] .movement-info{display:none!important;}
+body[data-iconos="on"] .movement-amount{font-size:1.6rem!important;}
+
+/* En modo iconos, los iconos grandes se sienten como botones */
+body[data-iconos="on"] .action-card:active{transform:scale(.98);}
+body[data-iconos="on"] .action-card:active .action-icon{transform:scale(.95);}
+body[data-iconos="on"] .menu-item{padding:20px 16px;}
+body[data-iconos="on"] .menu-emoji{font-size:2.8rem;}
+
+.guide-highlight{
+  position:relative!important;
+  z-index:5000!important;
+  outline:4px solid var(--bbva-light)!important;
+  outline-offset:4px!important;
+  border-radius:20px!important;
+  animation:guidePulse 1.5s ease-in-out infinite!important;
+  cursor:pointer!important;
+}
+@keyframes guidePulse{
+  0%,100%{
+    box-shadow:0 0 0 0 rgba(91,190,255,.7),
+               0 0 20px 4px rgba(91,190,255,.7),
+               0 0 40px 8px rgba(91,190,255,.4);
+  }
+  50%{
+    box-shadow:0 0 0 8px rgba(91,190,255,.15),
+               0 0 30px 8px rgba(91,190,255,.9),
+               0 0 60px 16px rgba(91,190,255,.5);
+  }
+}
+
+.guide-banner{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--bbva-blue) 0%,var(--bbva-dark) 100%);
+  color:#fff;padding:18px 22px;border-radius:20px;
+  box-shadow:0 12px 40px rgba(0,0,0,.45);
+  z-index:5001;width:420px;max-width:calc(100vw - 32px);
+  border:3px solid var(--bbva-light);
+  animation:bannerIn .4s ease-out;font-family:inherit;
+}
+body[data-contraste="on"] .guide-banner{background:#000;border-color:#ffff00;}
+@keyframes bannerIn{
+  from{transform:translate(-50%,30px);opacity:0;}
+  to{transform:translate(-50%,0);opacity:1;}
+}
+.guide-banner-step{
+  font-size:.72rem;font-weight:900;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--bbva-light);margin-bottom:6px;
+}
+.guide-banner-text{
+  font-size:1.05rem;font-weight:700;line-height:1.4;margin-bottom:14px;
+}
+.guide-banner-actions{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+}
+.guide-banner-btn{
+  padding:10px 16px;border-radius:10px;border:0;cursor:pointer;
+  font-family:inherit;font-weight:800;font-size:.85rem;
+  transition:background .2s,box-shadow .2s;
+}
+.guide-banner-cancel{background:rgba(255,255,255,.15);color:#fff;}
+.guide-banner-cancel:hover{background:rgba(255,255,255,.25);}
+.guide-banner-skip{
+  background:var(--bbva-light);color:var(--bbva-dark);margin-left:auto;
+}
+.guide-banner-skip:hover{
+  background:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.4),0 0 20px rgba(91,190,255,.9);
+}
+.guide-banner-hint{
+  font-size:.75rem;opacity:.8;display:flex;align-items:center;gap:4px;
+  margin-left:auto;font-weight:600;
+}
+
+.guide-success{
+  position:fixed;inset:0;z-index:5002;display:flex;align-items:center;
+  justify-content:center;background:rgba(7,33,70,.85);padding:16px;
+  animation:guidePop .4s ease-out;
+}
+.guide-success-card{
+  background:#fff;border-radius:24px;padding:32px 24px;max-width:440px;
+  width:100%;text-align:center;border:4px solid var(--success);
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.guide-success-emoji{
+  font-size:5rem;margin-bottom:12px;animation:guideBounce 1s ease infinite;
+}
+@keyframes guideBounce{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-10px);}
+}
+@keyframes guidePop{
+  from{opacity:0;transform:scale(.95);}
+  to{opacity:1;transform:scale(1);}
+}
+.guide-success h3{font-size:1.5rem;color:var(--success);margin:0 0 8px;}
+.guide-success p{margin:0 0 20px;color:var(--muted);font-size:1rem;}
+.guide-success button{
+  padding:14px 24px;background:var(--bbva-blue);color:#fff;border:0;
+  border-radius:12px;font-family:inherit;font-weight:800;font-size:1rem;
+  cursor:pointer;width:100%;
+}
+.guide-success button:hover{background:var(--bbva-mid);}
+</style>
+</head>
+<body data-textsize="grande" data-daltonismo="off" data-contraste="off" data-iconos="off" data-hablalo="on">
+
+<header class="top-bar">
+  <div class="brand">
+    <span class="logo">BBVA</span>
+    <span class="brand-sub hide-in-icon-mode">Modo Accesible</span>
+  </div>
+  <div class="controls">
+    <div class="ctrl-group" role="group" aria-label="Tamaño de texto">
+      <button class="ctrl-btn" data-textsize="normal" aria-label="Texto normal">A</button>
+      <button class="ctrl-btn active" data-textsize="grande" aria-label="Texto grande">A+</button>
+      <button class="ctrl-btn" data-textsize="max" aria-label="Texto máximo">A++</button>
+    </div>
+    <button class="ctrl-btn toggle" data-toggle="daltonismo" aria-pressed="false" title="Modo daltonismo">
+      <span aria-hidden="true">🎨</span><span class="ctrl-label">Daltonismo</span>
+    </button>
+    <button class="ctrl-btn toggle" data-toggle="iconos" aria-pressed="false" title="Modo iconos">
+      <span aria-hidden="true">👁️</span><span class="ctrl-label">Iconos</span>
+    </button>
+    <button class="ctrl-btn toggle" data-toggle="contraste" aria-pressed="false" title="Alto contraste">
+      <span aria-hidden="true">🌓</span><span class="ctrl-label">Contraste</span>
+    </button>
+    <button class="ctrl-btn toggle active" data-toggle="hablalo" aria-pressed="true" title="Activar o desactivar la voz">
+      <span aria-hidden="true">🗣️</span><span class="ctrl-label">Háblalo</span>
+    </button>
+    <button class="ctrl-btn" id="btn-read-screen" title="Leer la pantalla">
+      <span aria-hidden="true">🔊</span><span class="ctrl-label">Leer</span>
+    </button>
+  </div>
+</header>
+
+<div class="status-badge" id="status-badge" aria-live="polite"></div>
+
+<main>
+  <section class="screen active" id="screen-welcome">
+    <div class="container">
+      <div class="welcome-hero">
+        <h1 id="welcome-title">Bienvenido a tu banco</h1>
+        <p class="hide-in-icon-mode">Un home banking simple, con letra grande y botones claros.</p>
+      </div>
+      <div class="welcome-actions">
+        <button class="btn btn-primary" id="go-login">
+          <span class="emoji">🔑</span><span>Iniciar sesión</span>
+        </button>
+        <button class="btn" id="go-register">
+          <span class="emoji">📝</span><span>Crear cuenta nueva</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-register">
+    <div class="container">
+      <button class="btn hide-in-icon-mode" style="max-width:180px;margin-bottom:16px" id="back-from-register">
+        <span class="emoji">←</span><span>Volver</span>
+      </button>
+      <div class="form-card">
+        <h2>Crear cuenta</h2>
+        <p class="sub hide-in-icon-mode">Completa tus datos.</p>
+
+        <div class="field">
+          <label for="reg-nombre">Nombre</label>
+          <input id="reg-nombre" type="text" placeholder="Ej: Carlos">
+        </div>
+        <div class="field">
+          <label for="reg-apellido">Apellido</label>
+          <input id="reg-apellido" type="text" placeholder="Ej: López">
+        </div>
+
+        <h3>🆔 Identificación</h3>
+        <div class="field">
+          <label for="reg-dni">Documento (DNI)</label>
+          <input id="reg-dni" type="text" inputmode="numeric" maxlength="8" placeholder="Ej: 12345678">
+        </div>
+        <div class="field">
+          <label for="reg-tarjeta">Terminación de tarjeta BBVA</label>
+          <p class="hint" style="margin:0 0 6px">Los últimos 4 números de tu tarjeta</p>
+          <input id="reg-tarjeta" type="text" inputmode="numeric" maxlength="4" placeholder="Ej: 1234">
+        </div>
+
+        <h3>👆 Huella digital</h3>
+        <div class="finger-area">
+          <button class="finger-btn" id="finger-register-btn" aria-label="Registrar huella">
+            <span aria-hidden="true">👆</span>
+          </button>
+          <p id="finger-register-status" style="margin:0;font-weight:700;color:var(--bbva-dark);text-align:center">
+            Toca el dedo para registrar tu huella
+          </p>
+        </div>
+
+        <h3>❓ Pregunta secreta</h3>
+        <div class="field">
+          <label for="reg-pregunta">Elige tu pregunta secreta</label>
+          <select id="reg-pregunta">
+            <option value="">Elige una opción</option>
+            <option value="perro">¿Cómo se llama tu perro?</option>
+            <option value="hijo">¿Cómo se llama tu hijo o hija?</option>
+            <option value="madre">¿Cómo se llama tu madre?</option>
+            <option value="ciudad">¿En qué ciudad naciste?</option>
+            <option value="comida">¿Cuál es tu comida favorita?</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="reg-respuesta">Tu respuesta</label>
+          <input id="reg-respuesta" type="text" placeholder="Escribe tu respuesta">
+        </div>
+
+        <button class="btn btn-primary" id="btn-complete-register" style="margin-top:8px">
+          <span class="emoji">✓</span><span>Terminar registro</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-login">
+    <div class="container">
+      <button class="btn hide-in-icon-mode" style="max-width:180px;margin-bottom:16px" id="back-from-login">
+        <span class="emoji">←</span><span>Volver</span>
+      </button>
+      <div class="form-card">
+        <h2 id="login-title">Iniciar sesión</h2>
+        <p class="sub hide-in-icon-mode" id="login-sub">Elige cómo quieres entrar.</p>
+
+        <div class="menu-list" id="login-options">
+          <button class="menu-item" data-login="huella">
+            <span class="menu-emoji">👆</span>
+            <div class="menu-info">
+              <div class="menu-title">Entrar con mi huella</div>
+              <div class="menu-desc hide-in-icon-mode">Toca el sensor con tu dedo</div>
+            </div>
+          </button>
+          <button class="menu-item" data-login="pregunta">
+            <span class="menu-emoji">❓</span>
+            <div class="menu-info">
+              <div class="menu-title">Entrar con mi pregunta secreta</div>
+              <div class="menu-desc hide-in-icon-mode">Responde la pregunta que elegiste</div>
+            </div>
+          </button>
+        </div>
+
+        <div id="login-huella-panel" style="display:none">
+          <div class="finger-area">
+            <button class="finger-btn" id="finger-login-btn" aria-label="Verificar huella">
+              <span aria-hidden="true">👆</span>
+            </button>
+            <p id="finger-login-status" style="margin:0;font-weight:700;color:var(--bbva-dark);text-align:center">
+              Toca el dedo para entrar
+            </p>
+          </div>
+        </div>
+
+        <div id="login-pregunta-panel" style="display:none">
+          <div class="field">
+            <label id="login-pregunta-label">Tu pregunta secreta</label>
+            <input id="login-respuesta" type="text" placeholder="Tu respuesta" autocomplete="off">
+          </div>
+          <button class="btn btn-primary" id="btn-login-verify">
+            <span class="emoji">🔓</span><span>Verificar y entrar</span>
+          </button>
+        </div>
+
+        <p style="text-align:center;margin-top:20px;font-size:.85rem;color:var(--muted)" class="hide-in-icon-mode">
+          ¿No puedes entrar?
+          <a href="#" id="reset-account" style="color:var(--bbva-blue);font-weight:700;text-decoration:underline">
+            Empezar de nuevo
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen" id="screen-home">
+    <div class="container">
+      <div class="home-header">
+        <div>
+          <div class="greeting-row">
+            <h1 class="home-greeting" id="home-greeting">Hola 👋</h1>
+            <button class="btn-logout" id="btn-logout">← Salir</button>
+          </div>
+          <p class="home-sub" id="home-sub">Caja de Ahorro · Titular verificado</p>
+        </div>
+        <div class="balance-box" id="balance-box">
+          <span class="balance-label">
+            <span class="b-emoji" aria-hidden="true">💰</span>
+            <span class="b-text">Saldo disponible</span>
+          </span>
+          <span class="balance-amount" id="balance-amount">$ 348.500,50</span>
+          <button class="balance-toggle" id="balance-toggle">Ocultar 👁️</button>
+        </div>
+      </div>
+
+      <h2 class="section-title">
+        <span aria-hidden="true">✨</span>
+        <span class="hide-in-icon-mode">¿Qué quieres hacer hoy?</span>
+      </h2>
+
+      <div class="actions-grid">
+        <button class="action-card" data-action="transferir">
+          <span class="action-icon" aria-hidden="true">🔄</span>
+          <span class="action-title">Transferir</span>
+          <span class="action-desc">Enviar dinero a un familiar</span>
+        </button>
+        <button class="action-card" data-action="pagar">
+          <span class="action-icon" aria-hidden="true">🧾</span>
+          <span class="action-title">Pagar servicios</span>
+          <span class="action-desc">Luz, gas, teléfono, medicamentos</span>
+        </button>
+        <button class="action-card" data-action="comprobantes">
+          <span class="action-icon" aria-hidden="true">📄</span>
+          <span class="action-title">Comprobantes</span>
+          <span class="action-desc">Recibos de pagos y jubilación</span>
+        </button>
+        <button class="action-card" data-action="ayuda">
+          <span class="action-icon" aria-hidden="true">🙋‍♂️</span>
+          <span class="action-title">Pedir ayuda</span>
+          <span class="action-desc">Llamada, videollamada o guía</span>
+        </button>
+      </div>
+
+      <div class="reminders-card" id="reminders-card">
+        <h3 class="section-title" style="font-size:1.15rem">
+          <span aria-hidden="true">🔔</span>
+          <span class="hide-in-icon-mode">Recordatorios y próximos cobros</span>
+        </h3>
+        <div class="reminder">
+          <span class="reminder-icon" aria-hidden="true">💰</span>
+          <div class="reminder-info">
+            <div class="reminder-title">Jubilación ANSES</div>
+            <div class="reminder-meta">Se acredita el 1° de cada mes</div>
+          </div>
+          <span class="reminder-when">En 4 días</span>
+        </div>
+        <div class="reminder">
+          <span class="reminder-icon" aria-hidden="true">💵</span>
+          <div class="reminder-info">
+            <div class="reminder-title">Sueldo</div>
+            <div class="reminder-meta">Se acredita el 5 de cada mes</div>
+          </div>
+          <span class="reminder-when">En 8 días</span>
+        </div>
+        <div class="reminder">
+          <span class="reminder-icon" aria-hidden="true">🔥</span>
+          <div class="reminder-info">
+            <div class="reminder-title">Gas Metrogas</div>
+            <div class="reminder-meta">Vence el 20/11</div>
+          </div>
+          <span class="reminder-when soon">En 9 días</span>
+        </div>
+        <div class="reminder">
+          <span class="reminder-icon" aria-hidden="true">💡</span>
+          <div class="reminder-info">
+            <div class="reminder-title">Electricidad Edenor</div>
+            <div class="reminder-meta">Vence el 14/11</div>
+          </div>
+          <span class="reminder-when soon">En 3 días</span>
+        </div>
+      </div>
+
+      <div class="movements-card" id="movements-card">
+        <h3 class="section-title" style="font-size:1.15rem">
+          <span aria-hidden="true">📋</span>
+          <span class="hide-in-icon-mode">Últimos movimientos</span>
+        </h3>
+        <div class="movement movement-negative">
+          <span class="movement-icon" aria-hidden="true">🔄</span>
+          <div class="movement-info">
+            <div class="movement-title">Transferencia a María López</div>
+            <div class="movement-meta">Hoy, 14:22 · Acreditado</div>
+          </div>
+          <span class="movement-amount negative" data-amount="$ 25.000">$ 25.000</span>
+        </div>
+        <div class="movement movement-positive">
+          <span class="movement-icon" aria-hidden="true">💰</span>
+          <div class="movement-info">
+            <div class="movement-title">Jubilación ANSES</div>
+            <div class="movement-meta">Ayer, 09:10 · Acreditado</div>
+          </div>
+          <span class="movement-amount positive" data-amount="$ 385.000">+ $ 385.000</span>
+        </div>
+        <div class="movement movement-negative">
+          <span class="movement-icon" aria-hidden="true">🧾</span>
+          <div class="movement-info">
+            <div class="movement-title">Pago de Gas (Metrogas)</div>
+            <div class="movement-meta">10/11 · Pagado</div>
+          </div>
+          <span class="movement-amount negative" data-amount="$ 11.200">$ 11.200</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" role="dialog" aria-modal="true" id="modal-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  const STORAGE_KEY = 'bbva_v6_user';
+  const SETTINGS_KEY = 'bbva_v5_settings';
+  const memStore = {};
+  const Store = {
+    set(k, v){ memStore[k] = v; try{ localStorage.setItem(k, JSON.stringify(v)); }catch(_){} },
+    get(k){
+      if(memStore[k] !== undefined) return memStore[k];
+      try{ const raw = localStorage.getItem(k); if(raw === null) return null;
+        const v = JSON.parse(raw); memStore[k] = v; return v;
+      }catch(_){ return null; }
+    },
+    remove(k){ delete memStore[k]; try{ localStorage.removeItem(k); }catch(_){} }
+  };
+
+  let voiceOn = true;
+  const FEMALE_ES = ['monica','mónica','helena','laura','paulina','marisol',
+    'angelica','angélica','carmen','isabel','lucia','lucía','elena',
+    'esperanza','sabina','triana','abril','ximena','valentina','sofia','sofía'];
+
+  function pickVoice(){
+    if(!('speechSynthesis' in window)) return null;
+    const vs = window.speechSynthesis.getVoices() || [];
+    if(!vs.length) return null;
+    for(const v of vs){
+      if(/^es[-_]ES/i.test(v.lang) &&
+         FEMALE_ES.some(f => (v.name||'').toLowerCase().includes(f))) return v;
+    }
+    for(const v of vs){ if(/^es[-_]ES/i.test(v.lang)) return v; }
+    for(const v of vs){
+      if(/^es/i.test(v.lang) &&
+         FEMALE_ES.some(f => (v.name||'').toLowerCase().includes(f))) return v;
+    }
+    for(const v of vs){ if(/^es/i.test(v.lang)) return v; }
+    return null;
+  }
+  function speak(text){
+    if(!voiceOn) return;
+    if(!('speechSynthesis' in window)) return;
+    try{
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(String(text));
+      u.lang = 'es-ES'; u.rate = 0.92; u.pitch = 1.15;
+      const v = pickVoice(); if(v) u.voice = v;
+      window.speechSynthesis.speak(u);
+    }catch(_){}
+  }
+  if('speechSynthesis' in window){
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = ()=>window.speechSynthesis.getVoices();
+  }
+
+  /* ============================================================
+     TAMAÑO DE TEXTO — aplicado al ROOT (html) para que escalen
+     todas las unidades rem de la hoja de estilos.
+     ============================================================ */
+  function applyTextSize(size){
+    const px = size === 'max' ? 22 : size === 'grande' ? 18 : 16;
+    document.documentElement.style.fontSize = px + 'px';
+  }
+
+  let toastTimer = null;
+  function showToast(msg){
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+  }
+
+  const badgeEl = document.getElementById('status-badge');
+  function updateStatusBadge(){
+    const parts = [];
+    if(document.body.dataset.daltonismo === 'on') parts.push('🎨 Daltonismo');
+    if(document.body.dataset.iconos === 'on') parts.push('👁️ Iconos');
+    if(document.body.dataset.contraste === 'on') parts.push('🌓 Contraste');
+    if(!voiceOn) parts.push('🔇 Voz silenciada');
+    if(parts.length){
+      badgeEl.textContent = 'Activo: ' + parts.join(' · ');
+      badgeEl.classList.add('show');
+    } else {
+      badgeEl.classList.remove('show');
+    }
+  }
+
+  function saveSettings(){
+    Store.set(SETTINGS_KEY, {
+      textsize: document.body.dataset.textsize,
+      daltonismo: document.body.dataset.daltonismo,
+      iconos: document.body.dataset.iconos,
+      contraste: document.body.dataset.contraste,
+      hablalo: document.body.dataset.hablalo
+    });
+  }
+  function loadSettings(){
+    const s = Store.get(SETTINGS_KEY);
+    if(s && typeof s === 'object'){
+      if(s.textsize) document.body.dataset.textsize = s.textsize;
+      if(s.daltonismo) document.body.dataset.daltonismo = s.daltonismo;
+      if(s.iconos) document.body.dataset.iconos = s.iconos;
+      if(s.contraste) document.body.dataset.contraste = s.contraste;
+      if(s.hablalo) document.body.dataset.hablalo = s.hablalo;
+    }
+    voiceOn = document.body.dataset.hablalo !== 'off';
+    applyTextSize(document.body.dataset.textsize);
+    document.querySelectorAll('[data-textsize]').forEach(b=>{
+      b.classList.toggle('active', b.dataset.textsize === document.body.dataset.textsize);
+    });
+    document.querySelectorAll('[data-toggle]').forEach(b=>{
+      const on = document.body.dataset[b.dataset.toggle] === 'on';
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    updateStatusBadge();
+  }
+  loadSettings();
+
+  document.querySelectorAll('[data-toggle]').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      const key = btn.dataset.toggle;
+      const next = document.body.dataset[key] === 'on' ? 'off' : 'on';
+      document.body.dataset[key] = next;
+      btn.classList.toggle('active', next === 'on');
+      btn.setAttribute('aria-pressed', next === 'on' ? 'true' : 'false');
+      saveSettings(); updateStatusBadge();
+
+      if(key === 'hablalo'){
+        voiceOn = next === 'on';
+        if(voiceOn){ speak('Háblalo activado.'); showToast('🗣️ Háblalo activado'); }
+        else {
+          if('speechSynthesis' in window) window.speechSynthesis.cancel();
+          showToast('🔇 Háblalo desactivado');
+        }
+      } else if(key === 'iconos'){
+        showToast(next === 'on' ? '👁️ Modo iconos ACTIVADO' : 'Modo iconos desactivado');
+        if(next === 'on') speak('Modo iconos activado. Tocá los iconos grandes para usar la app.');
+      } else if(key === 'daltonismo'){
+        showToast(next === 'on'
+          ? '🎨 Daltonismo ACTIVADO · mirá los montos con ↑ y ↓'
+          : 'Modo daltonismo desactivado');
+        if(next === 'on') speak('Modo daltonismo activado. Los montos ahora tienen flechas y colores bien distintos.');
+      } else if(key === 'contraste'){
+        showToast(next === 'on' ? '🌓 Alto contraste ACTIVADO' : 'Alto contraste desactivado');
+        if(next === 'on') speak('Alto contraste activado.');
+      }
+    });
+  });
+
+  document.querySelectorAll('[data-textsize]').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      const size = btn.dataset.textsize;
+      if(document.body.dataset.textsize === size) return;
+      document.body.dataset.textsize = size;
+      applyTextSize(size);
+      document.querySelectorAll('[data-textsize]').forEach(b=>{
+        b.classList.toggle('active', b === btn);
+      });
+      saveSettings(); updateStatusBadge();
+      showToast(size === 'normal' ? 'Texto normal' : size === 'grande' ? 'Texto grande' : 'Texto máximo');
+      speak(size === 'normal' ? 'Texto normal.' : size === 'grande' ? 'Texto grande.' : 'Texto máximo.');
+    });
+  });
+
+  function goTo(id){
+    document.querySelectorAll('.screen').forEach(s=>{
+      s.classList.toggle('active', s.id === 'screen-' + id);
+    });
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function normalize(str){
+    return (str || '').toString().trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+  function loadUser(){
+    const u = Store.get(STORAGE_KEY);
+    if(!u || typeof u !== 'object') return null;
+    if(!u.nombre || !u.apellido) return null;
+    return u;
+  }
+  function saveUser(u){ Store.set(STORAGE_KEY, u); }
+
+  const existing = loadUser();
+  if(existing){
+    const t = document.getElementById('welcome-title');
+    if(t) t.textContent = '¡Hola!';
+  }
+
+  let fingerprintRegistered = false;
+
+  document.getElementById('go-register').addEventListener('click', ()=>{
+    speak('Crear cuenta nueva');
+    fingerprintRegistered = false;
+    ['reg-nombre','reg-apellido','reg-dni','reg-tarjeta','reg-respuesta'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.value = '';
+    });
+    document.getElementById('reg-pregunta').value = '';
+    const fp = document.getElementById('finger-register-btn');
+    fp.classList.remove('verified','scanning');
+    document.getElementById('finger-register-status').textContent = 'Toca el dedo para registrar tu huella';
+    goTo('register');
+  });
+  document.getElementById('back-from-register').addEventListener('click', ()=>goTo('welcome'));
+  document.getElementById('back-from-login').addEventListener('click', ()=>goTo('welcome'));
+  document.getElementById('go-login').addEventListener('click', ()=>{
+    const user = loadUser();
+    if(!user){
+      showToast('Primero crea una cuenta 📝');
+      speak('Todavía no tienes una cuenta. Primero crea una cuenta nueva.');
+      goTo('register');
+      return;
+    }
+    prepareLogin();
+    goTo('login');
+  });
+
+  document.getElementById('finger-register-btn').addEventListener('click', function(){
+    const btn = this;
+    const status = document.getElementById('finger-register-status');
+    if(btn.classList.contains('verified')) return;
+    btn.classList.add('scanning');
+    status.textContent = 'Escaneando tu huella…';
+    speak('Escaneando tu huella.');
+    setTimeout(()=>{
+      btn.classList.remove('scanning');
+      btn.classList.add('verified');
+      status.textContent = '¡Huella registrada! ✓';
+      fingerprintRegistered = true;
+      speak('Huella registrada con éxito.');
+    }, 1600);
+  });
+
+  document.getElementById('btn-complete-register').addEventListener('click', ()=>{
+    const nombre = document.getElementById('reg-nombre').value.trim();
+    const apellido = document.getElementById('reg-apellido').value.trim();
+    const dni = document.getElementById('reg-dni').value.trim().replace(/\D/g,'');
+    const tarjeta = document.getElementById('reg-tarjeta').value.trim().replace(/\D/g,'');
+    const pregunta = document.getElementById('reg-pregunta').value;
+    const respuestaRaw = document.getElementById('reg-respuesta').value.trim();
+
+    if(!nombre || !apellido){
+      showToast('Completa tu nombre y apellido'); speak('Por favor, completa tu nombre y apellido.'); return;
+    }
+    if(dni.length < 6 || dni.length > 8){
+      showToast('El DNI debe tener entre 6 y 8 números'); speak('Por favor, revisa tu documento.');
+      document.getElementById('reg-dni').focus(); return;
+    }
+    if(tarjeta.length !== 4){
+      showToast('La terminación debe tener 4 números'); speak('Por favor, escribí los últimos 4 números de tu tarjeta.');
+      document.getElementById('reg-tarjeta').focus(); return;
+    }
+    if(pregunta && !respuestaRaw){
+      showToast('Escribe la respuesta'); speak('Escribí la respuesta a tu pregunta.');
+      document.getElementById('reg-respuesta').focus(); return;
+    }
+    if(!fingerprintRegistered && !pregunta){
+      showToast('Registra la huella o una pregunta'); speak('Registrá la huella o elegí una pregunta.'); return;
+    }
+
+    saveUser({
+      nombre, apellido, dni, tarjeta,
+      huellaRegistrada: fingerprintRegistered,
+      pregunta: pregunta || null,
+      respuesta: pregunta && respuestaRaw ? normalize(respuestaRaw) : null
+    });
+    if(!loadUser()){ showToast('No se pudo guardar'); return; }
+    showToast('¡Registro completo! 🎉');
+    speak('Registro completo. ¡Bienvenido ' + nombre + '!');
+    setTimeout(()=>{ prepareLogin(); goTo('login'); }, 1200);
+  });
+
+  function prepareLogin(){
+    const user = loadUser();
+    if(!user){ showToast('No encontramos tu cuenta'); goTo('register'); return; }
+    const options = document.getElementById('login-options');
+    options.style.display = 'flex';
+    document.getElementById('login-huella-panel').style.display = 'none';
+    document.getElementById('login-pregunta-panel').style.display = 'none';
+    options.querySelectorAll('[data-login]').forEach(btn=>{
+      const m = btn.dataset.login;
+      let has = false;
+      if(m === 'huella' && user.huellaRegistrada === true) has = true;
+      if(m === 'pregunta' && user.pregunta && user.respuesta) has = true;
+      btn.style.display = has ? 'flex' : 'none';
+    });
+    document.getElementById('login-title').textContent = 'Hola, ' + user.nombre;
+    document.getElementById('login-sub').textContent = 'Elige cómo quieres entrar.';
+    document.getElementById('login-respuesta').value = '';
+  }
+
+  document.querySelectorAll('[data-login]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const m = btn.dataset.login;
+      const user = loadUser();
+      if(!user){ showToast('Sesión no encontrada'); goTo('welcome'); return; }
+      document.getElementById('login-options').style.display = 'none';
+      if(m === 'huella'){
+        document.getElementById('login-huella-panel').style.display = 'block';
+        const fp = document.getElementById('finger-login-btn');
+        fp.classList.remove('verified','scanning');
+        document.getElementById('finger-login-status').textContent = 'Toca el dedo para entrar';
+        speak('Apoya tu dedo en el sensor para entrar.');
+      } else {
+        const labels = {
+          perro:'¿Cómo se llama tu perro?', hijo:'¿Cómo se llama tu hijo o hija?',
+          madre:'¿Cómo se llama tu madre?', ciudad:'¿En qué ciudad naciste?',
+          comida:'¿Cuál es tu comida favorita?'
+        };
+        document.getElementById('login-pregunta-panel').style.display = 'block';
+        document.getElementById('login-pregunta-label').textContent =
+          labels[user.pregunta] || 'Tu pregunta secreta';
+        document.getElementById('login-respuesta').value = '';
+        speak('Tu pregunta secreta es: ' + (labels[user.pregunta] || 'tu pregunta secreta'));
+        setTimeout(()=>document.getElementById('login-respuesta').focus(), 200);
+      }
+    });
+  });
+
+  document.getElementById('finger-login-btn').addEventListener('click', function(){
+    const btn = this;
+    const status = document.getElementById('finger-login-status');
+    if(btn.classList.contains('verified')) return;
+    btn.classList.add('scanning');
+    status.textContent = 'Verificando huella…';
+    speak('Verificando tu huella.');
+    setTimeout(()=>{
+      btn.classList.remove('scanning');
+      btn.classList.add('verified');
+      status.textContent = '¡Huella verificada! ✓';
+      speak('Huella verificada. Entrando a tu cuenta.');
+      setTimeout(enterHome, 900);
+    }, 1400);
+  });
+
+  document.getElementById('btn-login-verify').addEventListener('click', ()=>{
+    const user = loadUser();
+    if(!user){ showToast('Sesión no encontrada'); goTo('welcome'); return; }
+    const typed = document.getElementById('login-respuesta').value;
+    if(!typed.trim()){ showToast('Escribe tu respuesta'); speak('Escribí tu respuesta.'); return; }
+    if(!user.respuesta){ showToast('Usa la huella en esta cuenta.'); speak('Esta cuenta no tiene pregunta configurada. Usá la huella.'); return; }
+    if(normalize(user.respuesta) === normalize(typed)){
+      speak('Respuesta correcta. Entrando a tu cuenta.'); enterHome();
+    } else {
+      showToast('Respuesta incorrecta. Intentá de nuevo.');
+      speak('La respuesta no es correcta. Inténtalo de nuevo.');
+      document.getElementById('login-respuesta').value = '';
+      document.getElementById('login-respuesta').focus();
+    }
+  });
+  document.getElementById('login-respuesta').addEventListener('keydown', function(e){
+    if(e.key === 'Enter'){ e.preventDefault(); document.getElementById('btn-login-verify').click(); }
+  });
+
+  function enterHome(){
+    const user = loadUser();
+    if(!user){ showToast('Sesión no encontrada'); goTo('welcome'); return; }
+    document.getElementById('home-greeting').textContent = 'Hola, ' + user.nombre + ' 👋';
+    const sub = document.getElementById('home-sub');
+    if(sub && user.dni && user.tarjeta){
+      sub.textContent = 'DNI ****' + user.dni.slice(-4) + ' · Tarjeta ****' + user.tarjeta;
+    }
+    goTo('home');
+    speak('Bienvenido a tu cuenta, ' + user.nombre + '. Tu saldo disponible es trescientos cuarenta y ocho mil quinientos pesos con cincuenta céntimos.');
+  }
+
+  document.getElementById('reset-account').addEventListener('click', (e)=>{
+    e.preventDefault();
+    if(confirm('¿Borrar tu cuenta y empezar de nuevo?')){
+      Store.remove(STORAGE_KEY);
+      showToast('Cuenta eliminada');
+      speak('Cuenta eliminada. Podés registrarte de nuevo.');
+      goTo('welcome');
+    }
+  });
+
+  document.getElementById('btn-logout').addEventListener('click', ()=>{
+    speak('Sesión cerrada. Hasta pronto.');
+    showToast('Sesión cerrada 👋');
+    goTo('welcome');
+  });
+
+  let balanceHidden = false;
+  document.getElementById('balance-toggle').addEventListener('click', function(){
+    const el = document.getElementById('balance-amount');
+    balanceHidden = !balanceHidden;
+    if(balanceHidden){
+      el.textContent = '••••••••';
+      this.textContent = 'Mostrar 👁️';
+      speak('Saldo oculto.');
+    } else {
+      el.textContent = '$ 348.500,50';
+      this.textContent = 'Ocultar 👁️';
+      speak('Tu saldo es trescientos cuarenta y ocho mil quinientos pesos.');
+    }
+  });
+
+  const modalBg = document.getElementById('modal-bg');
+  const modalContent = document.getElementById('modal-content');
+  function openModal(html){
+    modalContent.innerHTML = html;
+    modalBg.classList.add('active');
+    modalContent.querySelectorAll('[data-close-modal]').forEach(b=>{
+      b.addEventListener('click', closeModal);
+    });
+  }
+  function closeModal(){ modalBg.classList.remove('active'); }
+  modalBg.addEventListener('click', e=>{ if(e.target === modalBg) closeModal(); });
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && modalBg.classList.contains('active')) closeModal();
+  });
+
+  document.querySelectorAll('[data-action]').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      const a = card.dataset.action;
+      if(a === 'transferir') openTransferir();
+      else if(a === 'pagar') openPagar();
+      else if(a === 'comprobantes') openComprobantes();
+      else if(a === 'ayuda') openAyudaMenu();
+    });
+  });
+
+  /* ============================================================
+     IMPRESIÓN GENÉRICA DE COMPROBANTES
+     ============================================================ */
+  function printReceiptGeneric(opts){
+    const win = window.open('', '_blank', 'width=620,height=780');
+    if(!win){
+      showToast('Permití las ventanas emergentes para imprimir');
+      speak('Para imprimir, permití las ventanas emergentes del navegador.');
+      return;
+    }
+    const rowsHtml = (opts.rows || []).map(r =>
+      '<tr><th>' + r[0] + '</th><td class="' + (r[2] || '') + '">' + r[1] + '</td></tr>'
+    ).join('');
+
+    const html = '<!DOCTYPE html>'
+      + '<html lang="es"><head><meta charset="utf-8">'
+      + '<title>' + opts.title + ' ' + opts.ticket + '</title>'
+      + '<style>'
+      + 'body{font-family:Arial,Helvetica,sans-serif;padding:32px;color:#072146;max-width:520px;margin:0 auto;}'
+      + '.brand{background:#004481;color:#fff;display:inline-block;padding:6px 14px;border-radius:8px;font-weight:900;letter-spacing:1px;font-size:1.05rem;}'
+      + 'h1{color:#004481;font-size:1.5rem;margin:16px 0 4px;}'
+      + '.meta{color:#5a6a7a;font-size:.9rem;margin:0 0 20px;}'
+      + '.ok{color:#4CAF50;font-weight:900;font-size:1.1rem;margin:16px 0;}'
+      + 'table{width:100%;border-collapse:collapse;margin:0 0 24px;}'
+      + 'th,td{text-align:left;padding:12px 0;border-bottom:1px solid #d6dee6;vertical-align:top;}'
+      + 'th{color:#5a6a7a;font-weight:600;width:45%;}'
+      + 'td{font-weight:700;}'
+      + 'td.amount{font-size:1.4rem;color:#004481;font-weight:900;}'
+      + '.footer{font-size:.8rem;color:#5a6a7a;text-align:center;margin-top:32px;line-height:1.5;}'
+      + '</style></head><body>'
+      + '<span class="brand">BBVA</span>'
+      + '<h1>' + opts.title + '</h1>'
+      + '<p class="meta">Comprobante N° ' + opts.ticket + ' · ' + opts.dateStr + '</p>'
+      + '<p class="ok">✓ Operación realizada con éxito</p>'
+      + '<table>' + rowsHtml + '</table>'
+      + '<p class="footer">Documento válido como constancia de pago<br>Banco Central de la República Argentina (BCRA)</p>'
+      + '<' + 'script>window.onload=function(){window.focus();window.print();};<' + '/script>'
+      + '</body></html>';
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    speak('Abriendo ventana de impresión.');
+    showToast('🖨️ Abriendo impresión…');
+  }
+
+  function downloadReceiptGeneric(opts){
+    const content =
+      'BBVA · ' + opts.title + '\n' +
+      '=====================================\n\n' +
+      'Comprobante N°: ' + opts.ticket + '\n' +
+      'Fecha: ' + opts.dateStr + '\n\n' +
+      (opts.rows || []).map(r => r[0] + ': ' + r[1]).join('\n') + '\n\n' +
+      'Documento válido como constancia de pago\n' +
+      'Banco Central de la República Argentina (BCRA)\n';
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'comprobante-' + opts.ticket + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    speak('Comprobante descargado.');
+    showToast('📥 Comprobante descargado');
+  }
+
+  function whatsappReceipt(opts){
+    const msg = encodeURIComponent(opts.message);
+    speak('Abriendo WhatsApp para compartir el comprobante.');
+    showToast('📱 Abriendo WhatsApp…');
+    window.open('https://wa.me/?text=' + msg, '_blank');
+  }
+
+  /* ============================================================
+     TRANSFERIR · 3 pasos + éxito con comprobante
+     ============================================================ */
+  let transferState = { recipient: '', amount: 0 };
+
+  function openTransferir(){
+    transferState = { recipient: '', amount: 0 };
+    showTransferStep1();
+  }
+
+  function showTransferStep1(){
+    speak('Transferir dinero. Paso 1: ¿A quién le querés transferir?');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>🔄 Transferir · Paso 1 de 3</h3>
+      <p class="lead">¿A quién le querés transferir?</p>
+      <div class="menu-list">
+        <button class="menu-item" data-transfer-to="María López">
+          <span class="menu-emoji">👩</span>
+          <div class="menu-info"><div class="menu-title">María López</div><div class="menu-desc">Hija · Alias maria.lopez.bbva</div></div>
+        </button>
+        <button class="menu-item" data-transfer-to="Juan Carlos">
+          <span class="menu-emoji">👨</span>
+          <div class="menu-info"><div class="menu-title">Juan Carlos</div><div class="menu-desc">Hijo · Alias juancar.banco</div></div>
+        </button>
+        <button class="menu-item" data-transfer-to="Farmacia del Valle">
+          <span class="menu-emoji">💊</span>
+          <div class="menu-info"><div class="menu-title">Farmacia del Valle</div><div class="menu-desc">Cuenta comercial</div></div>
+        </button>
+      </div>
+    `);
+    modalContent.querySelectorAll('[data-transfer-to]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        transferState.recipient = b.dataset.transferTo;
+        showTransferStep2();
+      });
+    });
+  }
+
+  function showTransferStep2(){
+    const rec = transferState.recipient;
+    speak('Paso 2: ¿Cuánto le querés enviar a ' + rec + '? Escribí el monto o tocá uno rápido.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>🔄 Transferir · Paso 2 de 3</h3>
+      <p class="lead">¿Cuánto le querés enviar a <strong>${rec}</strong>?</p>
+      <div class="field">
+        <label for="transfer-amount">Monto a transferir</label>
+        <input id="transfer-amount" class="amount-input" type="text" inputmode="numeric"
+               placeholder="$ 0" autocomplete="off">
+        <p class="hint" style="margin:6px 0 0">Tu saldo disponible: <strong>$ 348.500,50</strong></p>
+      </div>
+      <div class="quick-amounts">
+        <button class="btn" data-quick-amount="5000">$ 5.000</button>
+        <button class="btn" data-quick-amount="10000">$ 10.000</button>
+        <button class="btn" data-quick-amount="25000">$ 25.000</button>
+      </div>
+      <button class="btn btn-primary" id="btn-transfer-continue">
+        <span class="emoji">➡️</span><span>Continuar</span>
+      </button>
+    `);
+    const amountInput = document.getElementById('transfer-amount');
+    modalContent.querySelectorAll('[data-quick-amount]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        amountInput.value = b.dataset.quickAmount;
+        speak('Monto: ' + Number(b.dataset.quickAmount).toLocaleString('es-AR') + ' pesos.');
+      });
+    });
+    document.getElementById('btn-transfer-continue').addEventListener('click', ()=>{
+      const raw = amountInput.value.replace(/\D/g, '');
+      const amount = parseInt(raw, 10);
+      if(!amount || amount < 100){
+        showToast('Escribí un monto válido');
+        speak('Por favor, escribí un monto mayor a 100 pesos.');
+        return;
+      }
+      if(amount > 348500){
+        showToast('Saldo insuficiente');
+        speak('No tenés saldo suficiente para esa cantidad.');
+        return;
+      }
+      transferState.amount = amount;
+      showTransferStep3();
+      advanceGuideFromExternal();
+    });
+    setTimeout(()=>amountInput.focus(), 200);
+  }
+
+  function showTransferStep3(){
+    const rec = transferState.recipient;
+    const amountFmt = '$ ' + transferState.amount.toLocaleString('es-AR');
+    speak('Paso 3: Vas a transferir ' + transferState.amount.toLocaleString('es-AR') + ' pesos a ' + rec + '. Revisá los datos y confirmá con tu huella.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>🔄 Transferir · Paso 3 de 3</h3>
+      <p class="lead">Revisá los datos antes de confirmar.</p>
+      <div class="summary-box">
+        <div class="summary-row">
+          <span class="lbl">Destinatario</span>
+          <span class="val">${rec}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Monto</span>
+          <span class="val big">${amountFmt}</span>
+        </div>
+        <div class="summary-row">
+          <span class="lbl">Cuenta origen</span>
+          <span class="val">Caja de Ahorro</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-transfer-confirm" style="margin-bottom:10px">
+        <span class="emoji">👆</span><span>Confirmar con huella</span>
+      </button>
+      <button class="btn" id="btn-transfer-back">
+        <span class="emoji">←</span><span>Volver</span>
+      </button>
+    `);
+    document.getElementById('btn-transfer-back').addEventListener('click', ()=>showTransferStep2());
+    document.getElementById('btn-transfer-confirm').addEventListener('click', ()=>{
+      const btn = document.getElementById('btn-transfer-confirm');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="emoji">⏳</span><span>Verificando huella…</span>';
+      speak('Verificando huella.');
+      setTimeout(()=>showTransferSuccess(), 1400);
+    });
+  }
+
+  function showTransferSuccess(){
+    const rec = transferState.recipient;
+    const amountFmt = '$ ' + transferState.amount.toLocaleString('es-AR');
+    const ticket = 'REC-' + Date.now().toString().slice(-8);
+    const dateStr = new Date().toLocaleString('es-AR');
+
+    if(guide.active){
+      guide.active = false;
+      clearGuideVisuals();
+    }
+
+    speak('¡Transferencia realizada con éxito! Enviaste ' + transferState.amount.toLocaleString('es-AR') + ' pesos a ' + rec + '. ¿Querés imprimir, enviar por WhatsApp o descargar el comprobante?');
+
+    openModal(`
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:5rem;animation:guideBounce 1s ease infinite;">✓</div>
+        <h3 style="color:var(--success);font-size:1.6rem;margin:8px 0;">¡Transferencia realizada!</h3>
+        <p style="color:var(--muted);font-size:1rem;margin:0;">Enviaste <strong style="color:var(--bbva-dark)">${amountFmt}</strong> a <strong style="color:var(--bbva-dark)">${rec}</strong>.</p>
+      </div>
+      <div style="background:rgba(25,115,184,.06);border:2px solid var(--border);border-radius:14px;padding:14px;margin-bottom:18px;text-align:center;">
+        <p style="margin:0;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:1px;font-weight:800;">Comprobante N°</p>
+        <p style="margin:6px 0 0;font-weight:900;font-family:monospace;font-size:1.1rem;">${ticket}</p>
+      </div>
+      <p style="text-align:center;font-weight:800;color:var(--bbva-dark);margin:0 0 12px;font-size:1.05rem;">¿Qué querés hacer con el comprobante?</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn" id="btn-print-comp"
+                style="background:#004481;color:#fff;border-color:#004481;">
+          <span class="emoji">🖨️</span><span>Imprimir comprobante</span>
+        </button>
+        <button class="btn" id="btn-send-whatsapp"
+                style="background:#25D366;color:#fff;border-color:#25D366;">
+          <span class="emoji">📱</span><span>Enviar por WhatsApp</span>
+        </button>
+        <button class="btn btn-primary" id="btn-download-comp">
+          <span class="emoji">📥</span><span>Descargar comprobante</span>
+        </button>
+        <button class="btn" data-close-modal>
+          <span class="emoji">✓</span><span>Listo</span>
+        </button>
+      </div>
+    `);
+
+    const receiptData = {
+      title: 'Comprobante de transferencia',
+      ticket: ticket,
+      dateStr: dateStr,
+      rows: [
+        ['Destinatario', rec],
+        ['Monto', amountFmt, 'amount'],
+        ['Cuenta origen', 'Caja de Ahorro'],
+        ['Estado', 'Acreditado al instante']
+      ]
+    };
+
+    document.getElementById('btn-print-comp').addEventListener('click', ()=>{
+      printReceiptGeneric(receiptData);
+    });
+
+    document.getElementById('btn-send-whatsapp').addEventListener('click', ()=>{
+      whatsappReceipt({
+        message: 'Hola ' + rec + ', te transferí ' + amountFmt +
+                 ' desde BBVA. Comprobante: ' + ticket
+      });
+    });
+
+    document.getElementById('btn-download-comp').addEventListener('click', ()=>{
+      downloadReceiptGeneric(receiptData);
+    });
+  }
+
+  /* ============================================================
+     PAGAR SERVICIOS + COMPROBANTE (IMPRIMIR / WHATSAPP / DESCARGAR)
+     ============================================================ */
+  function openPagar(){
+    speak('Pagar servicios. Estas son tus facturas pendientes. Tocá la factura que querés pagar.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>🧾 Pagar servicios</h3>
+      <p class="lead">Tocá la factura que querés pagar.</p>
+      <div class="menu-list">
+        <button class="menu-item" data-pay="Electricidad Edenor" data-amount="18450">
+          <span class="menu-emoji">💡</span>
+          <div class="menu-info"><div class="menu-title">Electricidad (Edenor)</div><div class="menu-desc">$ 18.450 · Vence en 3 días</div></div>
+        </button>
+        <button class="menu-item" data-pay="Gas Metrogas" data-amount="12300">
+          <span class="menu-emoji">🔥</span>
+          <div class="menu-info"><div class="menu-title">Gas (Metrogas)</div><div class="menu-desc">$ 12.300 · Vence en 8 días</div></div>
+        </button>
+        <button class="menu-item" data-pay="Teléfono Fibertel" data-amount="24700">
+          <span class="menu-emoji">📞</span>
+          <div class="menu-info"><div class="menu-title">Teléfono e Internet (Fibertel)</div><div class="menu-desc">$ 24.700 · Vencido hace 1 día</div></div>
+        </button>
+      </div>
+    `);
+    modalContent.querySelectorAll('[data-pay]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const serviceName = b.dataset.pay;
+        const amount = b.dataset.amount;
+        openPaymentReceipt(serviceName, amount);
+      });
+    });
+  }
+
+  function openPaymentReceipt(serviceName, amount){
+    const amountNum = Number(amount) || 0;
+    const amountFmt = '$ ' + amountNum.toLocaleString('es-AR');
+    const ticket = 'PAGO-' + Date.now().toString().slice(-8);
+    const dateStr = new Date().toLocaleString('es-AR');
+
+    if(guide.active){
+      guide.active = false;
+      clearGuideVisuals();
+    }
+
+    speak('Pago de ' + serviceName + ' realizado con éxito. Podés imprimir el comprobante, enviarlo por WhatsApp o descargarlo.');
+
+    openModal(`
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-size:5rem;animation:guideBounce 1s ease infinite;">✓</div>
+        <h3 style="color:var(--success);font-size:1.6rem;margin:8px 0;">¡Pago realizado!</h3>
+        <p style="color:var(--muted);font-size:1rem;margin:0;">Pagaste <strong style="color:var(--bbva-dark)">${amountFmt}</strong> de <strong style="color:var(--bbva-dark)">${serviceName}</strong>.</p>
+      </div>
+      <div style="background:rgba(25,115,184,.06);border:2px solid var(--border);border-radius:14px;padding:14px;margin-bottom:18px;text-align:center;">
+        <p style="margin:0;color:var(--muted);font-size:.8rem;text-transform:uppercase;letter-spacing:1px;font-weight:800;">Comprobante N°</p>
+        <p style="margin:6px 0 0;font-weight:900;font-family:monospace;font-size:1.1rem;">${ticket}</p>
+      </div>
+      <p style="text-align:center;font-weight:800;color:var(--bbva-dark);margin:0 0 12px;font-size:1.05rem;">¿Qué querés hacer con el comprobante?</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="btn" id="btn-print-pay"
+                style="background:#004481;color:#fff;border-color:#004481;">
+          <span class="emoji">🖨️</span><span>Imprimir comprobante</span>
+        </button>
+        <button class="btn" id="btn-wa-pay"
+                style="background:#25D366;color:#fff;border-color:#25D366;">
+          <span class="emoji">📱</span><span>Enviar por WhatsApp</span>
+        </button>
+        <button class="btn btn-primary" id="btn-download-pay">
+          <span class="emoji">📥</span><span>Descargar comprobante</span>
+        </button>
+        <button class="btn" data-close-modal>
+          <span class="emoji">✓</span><span>Listo</span>
+        </button>
+      </div>
+    `);
+
+    const receiptData = {
+      title: 'Comprobante de pago de servicio',
+      ticket: ticket,
+      dateStr: dateStr,
+      rows: [
+        ['Servicio', serviceName],
+        ['Monto', amountFmt, 'amount'],
+        ['Cuenta origen', 'Caja de Ahorro'],
+        ['Estado', 'Pagado']
+      ]
+    };
+
+    document.getElementById('btn-print-pay').addEventListener('click', ()=>{
+      printReceiptGeneric(receiptData);
+    });
+
+    document.getElementById('btn-wa-pay').addEventListener('click', ()=>{
+      whatsappReceipt({
+        message: 'Hola, pagué ' + amountFmt + ' de ' + serviceName +
+                 ' desde BBVA. Comprobante: ' + ticket
+      });
+    });
+
+    document.getElementById('btn-download-pay').addEventListener('click', ()=>{
+      downloadReceiptGeneric(receiptData);
+    });
+  }
+
+  function openComprobantes(){
+    speak('Tus comprobantes. Elegí el que querés ver.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>📄 Mis comprobantes</h3>
+      <p class="lead">Tocá un comprobante para verlo.</p>
+      <div class="menu-list">
+        <button class="menu-item" data-comprobante="1"><span class="menu-emoji">🔄</span><div class="menu-info"><div class="menu-title">Transferencia a María López</div><div class="menu-desc">Hoy, 14:22 · $ 25.000</div></div></button>
+        <button class="menu-item" data-comprobante="2"><span class="menu-emoji">💰</span><div class="menu-info"><div class="menu-title">Jubilación ANSES</div><div class="menu-desc">Ayer, 09:10 · + $ 385.000</div></div></button>
+        <button class="menu-item" data-comprobante="3"><span class="menu-emoji">🧾</span><div class="menu-info"><div class="menu-title">Pago de Gas (Metrogas)</div><div class="menu-desc">10/11 · $ 11.200</div></div></button>
+      </div>
+    `);
+    modalContent.querySelectorAll('[data-comprobante]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        closeModal();
+        speak('Comprobante listo. Podés descargarlo o compartirlo.');
+        showToast('✓ Comprobante listo para descargar');
+      });
+    });
+  }
+
+  /* ============================================================
+     AYUDA
+     ============================================================ */
+  function openAyudaMenu(){
+    speak('Pedir ayuda. Podés elegir llamada, videollamada, o guía paso a paso.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>🙋‍♂️ ¿Cómo te ayudamos?</h3>
+      <p class="lead">Elegí cómo querés recibir ayuda.</p>
+      <div class="menu-list">
+        <button class="menu-item" data-help="llamada">
+          <span class="menu-emoji">📞</span>
+          <div class="menu-info"><div class="menu-title">Llamada telefónica</div><div class="menu-desc">Un asesor te llama</div></div>
+        </button>
+        <button class="menu-item" data-help="videollamada">
+          <span class="menu-emoji">📹</span>
+          <div class="menu-info"><div class="menu-title">Videollamada</div><div class="menu-desc">Ves al asesor en pantalla</div></div>
+        </button>
+        <button class="menu-item" data-help="guia">
+          <span class="menu-emoji">📖</span>
+          <div class="menu-info"><div class="menu-title">Guía paso a paso</div><div class="menu-desc">Te iluminamos los botones</div></div>
+        </button>
+      </div>
+    `);
+    modalContent.querySelectorAll('[data-help]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const h = b.dataset.help;
+        if(h === 'llamada') solicitarLlamada();
+        else if(h === 'videollamada') solicitarVideollamada();
+        else if(h === 'guia') openGuiaMenu();
+      });
+    });
+  }
+
+  function solicitarLlamada(){
+    speak('Solicitud de llamada enviada. Un asesor del equipo Senior te llamará en menos de 2 minutos.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <div style="text-align:center">
+        <div style="font-size:4rem;margin-bottom:12px">📞</div>
+        <h3>Llamada solicitada</h3>
+        <p class="lead">Un asesor te va a llamar en menos de 2 minutos.</p>
+        <p style="color:var(--muted);font-size:.9rem">Mantené tu teléfono cerca. No te va a pedir tu clave.</p>
+        <button class="btn btn-primary" data-close-modal style="margin-top:16px">
+          <span class="emoji">✓</span><span>Entendido</span>
+        </button>
+      </div>
+    `);
+  }
+  function solicitarVideollamada(){
+    speak('Iniciando videollamada con un asesor humano.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <div style="text-align:center">
+        <div style="font-size:4rem;margin-bottom:12px">📹</div>
+        <h3>Videollamada en curso</h3>
+        <p class="lead">Vas a ver al asesor en pantalla y él te guía.</p>
+        <p style="color:var(--muted);font-size:.9rem">El asesor NUNCA te va a pedir tu clave.</p>
+        <button class="btn btn-primary" data-close-modal style="margin-top:16px">
+          <span class="emoji">✓</span><span>Entendido</span>
+        </button>
+      </div>
+    `);
+  }
+
+  function openGuiaMenu(){
+    speak('Guía paso a paso. Elegí qué operación querés hacer.');
+    openModal(`
+      <button class="modal-close" data-close-modal aria-label="Cerrar">✕</button>
+      <h3>📖 Guía paso a paso</h3>
+      <p class="lead">Elegí la operación. Te iluminamos los botones.</p>
+      <div class="menu-list">
+        <button class="menu-item" data-guide="transferir">
+          <span class="menu-emoji">🔄</span>
+          <div class="menu-info"><div class="menu-title">Transferir dinero</div><div class="menu-desc">Enviar a un familiar</div></div>
+        </button>
+        <button class="menu-item" data-guide="pagar">
+          <span class="menu-emoji">🧾</span>
+          <div class="menu-info"><div class="menu-title">Pagar servicios</div><div class="menu-desc">Luz, gas, teléfono</div></div>
+        </button>
+        <button class="menu-item" data-guide="comprobantes">
+          <span class="menu-emoji">📄</span>
+          <div class="menu-info"><div class="menu-title">Ver comprobantes</div><div class="menu-desc">Recibos de pagos</div></div>
+        </button>
+        <button class="menu-item" data-guide="movimientos">
+          <span class="menu-emoji">📋</span>
+          <div class="menu-info"><div class="menu-title">Ver últimos movimientos</div><div class="menu-desc">Ingresos y gastos</div></div>
+        </button>
+        <button class="menu-item" data-guide="recordatorios">
+          <span class="menu-emoji">🔔</span>
+          <div class="menu-info"><div class="menu-title">Ver recordatorios</div><div class="menu-desc">Jubilación, sueldo, vencimientos</div></div>
+        </button>
+        <button class="menu-item" data-guide="saldo">
+          <span class="menu-emoji">💰</span>
+          <div class="menu-info"><div class="menu-title">Consultar saldo</div><div class="menu-desc">Cuánto dinero tenés</div></div>
+        </button>
+      </div>
+    `);
+    modalContent.querySelectorAll('[data-guide]').forEach(b=>{
+      b.addEventListener('click', ()=>startGuide(b.dataset.guide));
+    });
+  }
+
+  /* ============================================================
+     SISTEMA DE GUÍA
+     ============================================================ */
+  const guide = {
+    steps: [], current: 0, active: false,
+    highlightedEl: null, banner: null, clickHandler: null
+  };
+
+  const GUIDES = {
+    transferir: [
+      { type: 'click', sel: '[data-action="transferir"]',
+        text: 'Paso 1: Tocá "Transferir" (el que brilla en azul).' },
+      { type: 'click', sel: '[data-transfer-to="María López"]',
+        text: 'Paso 2: Elegí a María López, tu hija.' },
+      { type: 'external', sel: '#btn-transfer-continue',
+        text: 'Paso 3: Escribí el monto o tocá uno rápido, y después "Continuar".' },
+      { type: 'external', sel: '#btn-transfer-confirm',
+        text: 'Paso 4: Tocá "Confirmar con huella" para completar la transferencia.' }
+    ],
+    pagar: [
+      { type: 'click', sel: '[data-action="pagar"]',
+        text: 'Paso 1: Tocá "Pagar servicios" (el que brilla en azul).' },
+      { type: 'click', sel: '[data-pay="Electricidad Edenor"]',
+        text: 'Paso 2: Elegí la factura que querés pagar.' },
+      { type: 'finish', text: '¡Listo! El pago se realizó con éxito. Podés imprimir o enviar el comprobante por WhatsApp.' }
+    ],
+    comprobantes: [
+      { type: 'click', sel: '[data-action="comprobantes"]',
+        text: 'Paso 1: Tocá "Comprobantes" (el que brilla en azul).' },
+      { type: 'click', sel: '[data-comprobante="1"]',
+        text: 'Paso 2: Elegí el comprobante que querés ver.' },
+      { type: 'finish', text: '¡Listo! El comprobante se descargó con éxito.' }
+    ],
+    movimientos: [
+      { type: 'read', sel: '#movements-card',
+        text: 'Acá ves todos tus últimos movimientos.' },
+      { type: 'finish', text: 'Tocá cualquier movimiento para ver más detalles.' }
+    ],
+    recordatorios: [
+      { type: 'read', sel: '#reminders-card',
+        text: 'Acá ves cuándo te acreditan la jubilación o el sueldo.' },
+      { type: 'finish', text: 'Los que están en naranja vencen pronto. ¡Ojo con esos!' }
+    ],
+    saldo: [
+      { type: 'read', sel: '#balance-box',
+        text: 'Acá arriba está tu saldo disponible.' },
+      { type: 'finish', text: 'Si querés ocultarlo, tocá "Ocultar".' }
+    ]
+  };
+
+  function isVisible(el){
+    if(!el || !el.isConnected) return false;
+    const r = el.getBoundingClientRect();
+    if(r.width < 5 || r.height < 5) return false;
+    const cs = getComputedStyle(el);
+    if(cs.display === 'none' || cs.visibility === 'hidden') return false;
+    if(cs.opacity === '0') return false;
+    return true;
+  }
+
+  function waitForVisibleElement(selector, timeout){
+    return new Promise(resolve=>{
+      const start = Date.now();
+      function check(){
+        const el = document.querySelector(selector);
+        if(el && isVisible(el)) return resolve(el);
+        if(Date.now() - start > (timeout || 3000)) return resolve(null);
+        setTimeout(check, 100);
+      }
+      check();
+    });
+  }
+
+  function clearGuideVisuals(){
+    if(guide.highlightedEl){
+      try{ guide.highlightedEl.classList.remove('guide-highlight'); }catch(_){}
+      guide.highlightedEl = null;
+    }
+    if(guide.banner){
+      try{ guide.banner.remove(); }catch(_){}
+      guide.banner = null;
+    }
+    if(guide.clickHandler){
+      try{ document.removeEventListener('click', guide.clickHandler, true); }catch(_){}
+      guide.clickHandler = null;
+    }
+  }
+
+  async function startGuide(key){
+    endGuide(false);
+    const steps = GUIDES[key];
+    if(!steps) return;
+    closeModal();
+    await new Promise(r=>setTimeout(r, 250));
+    guide.steps = steps;
+    guide.current = 0;
+    guide.active = true;
+    showGuideStep();
+  }
+
+  async function showGuideStep(){
+    if(!guide.active) return;
+    const step = guide.steps[guide.current];
+    if(!step){ endGuide(); return; }
+
+    if(step.type === 'finish'){ showGuideSuccess(step.text); return; }
+
+    clearGuideVisuals();
+
+    let target = null;
+    if(step.sel){
+      target = await waitForVisibleElement(step.sel, 4000);
+      if(!target){ endGuide(); return; }
+      const r = target.getBoundingClientRect();
+      if(r.top < 80 || r.bottom > window.innerHeight - 180){
+        target.scrollIntoView({ behavior:'smooth', block:'center' });
+        await new Promise(r=>setTimeout(r, 350));
+      }
+      target.classList.add('guide-highlight');
+      guide.highlightedEl = target;
+    }
+
+    speak(step.text);
+    renderGuideBanner(step, target);
+
+    if(step.type === 'click' && target){
+      guide.clickHandler = (e)=>{
+        const hit = target.contains(e.target) || target === e.target;
+        if(hit){
+          document.removeEventListener('click', guide.clickHandler, true);
+          guide.clickHandler = null;
+          clearGuideVisuals();
+          guide.current++;
+          setTimeout(showGuideStep, 500);
+        }
+      };
+      document.addEventListener('click', guide.clickHandler, true);
+    }
+  }
+
+  function advanceGuideFromExternal(){
+    if(!guide.active) return;
+    clearGuideVisuals();
+    guide.current++;
+    setTimeout(showGuideStep, 500);
+  }
+
+  function renderGuideBanner(step, target){
+    const banner = document.createElement('div');
+    banner.className = 'guide-banner';
+    guide.banner = banner;
+
+    const stepNum = guide.current + 1;
+    const totalSteps = guide.steps.filter(s=>s.type !== 'finish').length;
+
+    let actionsHTML;
+    if(step.type === 'click'){
+      actionsHTML = `
+        <button class="guide-banner-btn guide-banner-cancel" data-guide-cancel>✕ Cancelar</button>
+        <span class="guide-banner-hint">👆 Tocá el elemento iluminado</span>
+      `;
+    } else if(step.type === 'external'){
+      actionsHTML = `
+        <button class="guide-banner-btn guide-banner-cancel" data-guide-cancel>✕ Cancelar</button>
+        <span class="guide-banner-hint">👆 Completá la acción</span>
+      `;
+    } else {
+      actionsHTML = `
+        <button class="guide-banner-btn guide-banner-cancel" data-guide-cancel>✕ Cancelar</button>
+        <button class="guide-banner-btn guide-banner-skip" data-guide-skip>Siguiente ➡️</button>
+      `;
+    }
+
+    banner.innerHTML = `
+      <div class="guide-banner-step">Paso ${stepNum} de ${totalSteps}</div>
+      <div class="guide-banner-text">${step.text}</div>
+      <div class="guide-banner-actions">${actionsHTML}</div>
+    `;
+
+    document.body.appendChild(banner);
+
+    banner.querySelector('[data-guide-cancel]').addEventListener('click', ()=>endGuide());
+    const skip = banner.querySelector('[data-guide-skip]');
+    if(skip){
+      skip.addEventListener('click', ()=>{
+        clearGuideVisuals();
+        guide.current++;
+        showGuideStep();
+      });
+    }
+  }
+
+  function endGuide(announce){
+    guide.active = false;
+    clearGuideVisuals();
+    closeModal();
+    if(announce !== false){
+      speak('Guía cerrada.');
+    }
+  }
+
+  function showGuideSuccess(text){
+    guide.active = false;
+    clearGuideVisuals();
+    closeModal();
+    const overlay = document.createElement('div');
+    overlay.className = 'guide-success';
+    overlay.innerHTML = `
+      <div class="guide-success-card">
+        <div class="guide-success-emoji">🎉</div>
+        <h3>¡Operación completada!</h3>
+        <p>${text || '¡Lo lograste! Tu operación se realizó con éxito.'}</p>
+        <button data-guide-finish>✓ Entendido</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    speak('¡Excelente! La operación se completó con éxito.');
+    overlay.querySelector('[data-guide-finish]').addEventListener('click', ()=>{
+      overlay.remove();
+    });
+  }
+
+  document.getElementById('btn-read-screen').addEventListener('click', ()=>{
+    const active = document.querySelector('.screen.active');
+    if(!active) return;
+    const text = (active.innerText || '').replace(/\s+/g,' ').trim();
+    const wasOn = voiceOn;
+    voiceOn = true;
+    speak(text);
+    voiceOn = wasOn;
+    showToast('🔊 Leyendo pantalla');
+  });
+
+  setTimeout(()=>{
+    if(voiceOn){
+      if(existing){
+        speak('Hola. Elegí iniciar sesión.');
+      } else {
+        speak('Bienvenido a BBVA Modo Accesible. Elegí iniciar sesión o crear una cuenta nueva.');
+      }
+    }
+  }, 900);
+
+})();
+</script>
+    <footer style="padding: 20px; text-align: center; background-color: #000; color: #fff; font-size: 0.8rem; border-top: 1px solid #ffff00; margin-top: 40px; font-family: sans-serif;">
+        <p><strong>© 2026 Lucila Vallina.</strong> Todos los derechos reservados. Código, diseño y contenido protegidos por derechos de autor.</p>
+        <p style="font-size: 0.7rem; color: #ffff00; margin-top: 5px;">Prohibida la reproducción total o parcial sin autorización expresa del autor.</p>
+    </footer>
+</body>
+</html>

@@ -150,7 +150,7 @@
                 <div class="card-img" style="background-image: url('assets/marca-branding.jpg');"></div>
                 <div class="card-content">
                     <div class="card-tags"><span class="tag">Branding</span><span class="tag impact">Social Media</span></div>
-                    <h3>Identidades de Marca Ficticias</h3>
+                    <h3>Piezas Comerciales para Redes</h3>
                     <p>Conceptos visuales para marcas ficticias de distintos rubros: identidad, tono y piezas para redes.</p>
                     <span class="card-link" onclick="abrirCasoEstudio('branding')">Ver caso de estudio →</span>
                 </div>
@@ -182,7 +182,7 @@
                 <div class="card-img" style="background-image: url('assets/marca-modelo-relacional.jpg');"></div>
                 <div class="card-content">
                     <div class="card-tags"><span class="tag">Power BI</span><span class="tag">Data Modeling</span></div>
-                    <h3>Arquitectura de Datos Editorial</h3>
+                    <h3>Arquitectura de Datos</h3>
                     <p>Proyecto integrador de Coderhouse: del modelo relacional al tablero interactivo en Power BI.</p>
                     <span class="card-link" onclick="abrirCasoEstudio('modelo')">Ver caso de estudio →</span>
                 </div>
@@ -194,9 +194,9 @@
                     <p>Con datos de Goodreads analicé cómo la extensión de un libro y su pertenencia a una serie influyen en la cantidad de reseñas, y construí un tablero interactivo para explorarlo.</p>
                 </div>
                 <div class="data-stats">
-                    <div class="data-stat"><strong>29%</strong><span>más reseñas en lectores inmersivos que en ágiles</span></div>
-                    <div class="data-stat"><strong>3</strong><span>perfiles de lector: Ágil, Inmersivo y Mixto</span></div>
-                    <div class="data-stat"><strong>6</strong><span>solapas interactivas en el tablero de Power BI</span></div>
+                    <div class="data-stat"><strong>29%</strong><span>Más reseñas en lectores inmersivos que en ágiles</span></div>
+                    <div class="data-stat"><strong>3</strong><span>Tipos de perfil lector: Ágil, Inmersivo y Mixto</span></div>
+                    <div class="data-stat"><strong>6</strong><span>Solapas interactivas en el tablero de Power BI</span></div>
                 </div>
                 <div class="tools">
                     <span class="tool-badge">Power BI</span><span class="tool-badge">DAX</span><span class="tool-badge">Power Query</span><span class="tool-badge">Excel</span>
@@ -265,14 +265,14 @@
     <script>
         const proyectos = {
             branding: {
-                titulo: "Identidades de Marca Ficticias", subtitulo: "Exploración de branding y social media.", tags: ["Branding", "Canva Pro", "IA Generativa"], descripcion: "Una serie de identidades visuales para marcas ficticias de distintos rubros. Cada una tiene su concepto, su paleta y sus piezas de redes.", tipo: "galeria",
+                titulo: "Piezas Comerciales para Redes", subtitulo: "Diseño y copywriting adaptados a distintos rubros.", tags: ["Branding", "Canva Pro", "IA Generativa"], descripcion: "Exploración de contenido comercial para redes sociales en distintos sectores, moda, gastronomía y estética. Cada pieza trabaja un tono visual, una jerarquía tipográfica y un mensaje pensado para el público de cada rubro.", tipo: "galeria",
                 archivo: [
                     "assets/marcas-1.jpg", 
                     "assets/marcas-2.jpg"
                 ]
             },
             fandoms: {
-                titulo: "Narrativas para Fandoms", subtitulo: "Posteos y video editorial para comunidades de nicho.", tags: ["Dirección de Arte", "Copywriting"], descripcion: "Posteos para comunidades de nicho, entre BTS y Bookstagram. Debajo de las piezas estáticas, dos videos editoriales siguen la misma dirección de arte.", tipo: "galeria",
+                titulo: "Narrativas para Fandoms", subtitulo: "Posteos y video editorial para comunidades de nicho.", tags: ["Dirección de Arte", "Copywriting"], descripcion: "Piezas creadas en Canva y CapCut a partir de intereses personales, entre la estética de fandoms como BTS y el universo Bookstagram, combinadas con fotos y videos editoriales trabajados bajo una misma dirección de arte y ritmo narrativo.", tipo: "galeria",
                 archivo: [
                     "assets/fandom-1.jpg", 
                     "assets/fandom-2.jpg", 
@@ -292,7 +292,7 @@
                 archivo: "documentos/oh-my-lor.pdf"
             },
             modelo: {
-                titulo: "Arquitectura de Datos Editorial", subtitulo: "Proyecto integrador: modelo relacional y Power BI.", tags: ["Power BI", "Data Modeling", "SQL"], descripcion: "Proyecto final de Coderhouse. Partí de datos de Goodreads, limpié la base, armé el modelo relacional y lo llevé a un tablero en Power BI. Abajo están las tres entregas, la presentación final y el video donde recorro el trabajo.", tipo: "proyecto-completo",
+                titulo: "Arquitectura de Datos", subtitulo: "Proyecto integrador: modelo relacional y Power BI.", tags: ["Power BI", "Data Modeling", "SQL"], descripcion: "Proyecto final de Coderhouse. Partí de datos de Goodreads, limpié la base, armé el modelo relacional y lo llevé a un tablero en Power BI. Abajo están las tres entregas, la presentación final y el video donde recorro el trabajo.", tipo: "proyecto-completo",
                 archivo: { 
                     pdfs: [
                         { label: "Entrega 1", url: "documentos/entrega-n1.pdf" },
@@ -327,14 +327,35 @@
             proyecto.tags.forEach(tag => { tagsHTML += `<span class="tag">${tag}</span>`; });
             let visorHTML = '';
             
-            if(proyecto.tipo === 'galeria') {
-                proyecto.archivo.forEach(img => { visorHTML += `<img src="${img}" alt="${proyecto.titulo}">`; });
-                if (proyecto.videos) {
-                    let videosHTML = '';
-                    proyecto.videos.forEach(video => {
-                        videosHTML += `<figure class="case-video"><video autoplay muted loop playsinline preload="metadata" src="${video.src}" title="${video.label}"></video></figure>`;
-                    });
-                    visorHTML += `<div class="case-video-row">${videosHTML}</div>`;
+                      if(proyecto.tipo === 'galeria') {
+                if (idProyecto === 'fandoms') {
+                    // Muestra las 2 primeras fotos
+                    visorHTML += `<img src="${proyecto.archivo[0]}" alt="${proyecto.titulo}">`;
+                    visorHTML += `<img src="${proyecto.archivo[1]}" alt="${proyecto.titulo}">`;
+                    
+                    // Muestra la fila de los 4 videos
+                    if (proyecto.videos) {
+                        let videosHTML = '';
+                        proyecto.videos.forEach(video => {
+                            videosHTML += `<figure class="case-video"><video autoplay muted loop playsinline preload="metadata" src="${video.src}" title="${video.label}"></video></figure>`;
+                        });
+                        visorHTML += `<div class="case-video-row">${videosHTML}</div>`;
+                    }
+                    
+                    // Muestra las 3 fotos restantes
+                    for (let i = 2; i < proyecto.archivo.length; i++) {
+                        visorHTML += `<img src="${proyecto.archivo[i]}" alt="${proyecto.titulo}">`;
+                    }
+                } else {
+                    // Para los demás proyectos (como Branding) se queda igual
+                    proyecto.archivo.forEach(img => { visorHTML += `<img src="${img}" alt="${proyecto.titulo}">`; });
+                    if (proyecto.videos) {
+                        let videosHTML = '';
+                        proyecto.videos.forEach(video => {
+                            videosHTML += `<figure class="case-video"><video autoplay muted loop playsinline preload="metadata" src="${video.src}" title="${video.label}"></video></figure>`;
+                        });
+                        visorHTML += `<div class="case-video-row">${videosHTML}</div>`;
+                    }
                 }
             } else if (proyecto.tipo === 'pdf') {
                 visorHTML = `
@@ -354,10 +375,10 @@
                         <div style="margin-bottom:15px; text-align:center;">${botonesHTML}</div>
                         <div class="pdf-actions"><a id="pdf-link-externo" href="${primero}" target="_blank" rel="noopener">Abrir PDF en una pestaña nueva ↗</a></div>
                         <iframe id="pdf-viewer-dinamico" src="${primero}" title="Entrega" width="100%" height="600px" style="border:none; border-radius:8px; margin-bottom:30px; background:#fff;"></iframe>
-                        <h3 style="margin-bottom:15px; text-align:center; border-top:1px solid #ddd; padding-top:20px;">Video Explicativo</h3>
+                        <h3 style="margin-bottom:15px; text-align:center; border-top:1px solid #ddd; padding-top:20px;">Así se ve el proyecto en movimiento</h3>
                         <div class="video-box">
                             <div class="video-wrap is-local">
-                                <video autoplay muted loop playsinline preload="metadata" src="${proyecto.archivo.video}" title="Video explicativo"></video>
+                                <video autoplay muted loop playsinline preload="metadata" src="${proyecto.archivo.video}" title="Así se ve el proyecto en movimiento"></video>
                             </div>
                             <p class="video-fallback"><a href="https://youtu.be/${proyecto.archivo.youtube}" target="_blank" rel="noopener">Verlo también en YouTube ↗</a></p>
                         </div>
